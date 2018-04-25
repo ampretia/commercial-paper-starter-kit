@@ -19,9 +19,54 @@ var mkdirp = require('mkdirp');
  
 gulp.task('default', function () {
 
+});
+
+const log = (str)=>{
+    console.log(str);
+}
+
+/**
+ * This simply defines help task which would produce usage
+ * display for this gulpfile. Simple run `gulp help` to see how it works.
+ * NOTE: this task will not appear in a usage output as far as it is not
+ * marked with the @task tag.
+ */
+gulp.task('help' , function() {
+    return usage(gulp); 
+});
+
+/**
+ * We may also link usage as default gulp task:
+ */
+gulp.task('default', ['help']);
+
+/**
+ * Post install task to get the latest tools for a local fabric dev server
+ * 
+ * @task {postinstall}
+ */
+gulp.task('postinstall',async () => {
+
+    mkdirp.sync(localScriptDir)
+   
+    let src = 'https://raw.githubusercontent.com/hyperledger/composer-tools/master/packages/fabric-dev-servers/fabric-dev-servers.tar.gz';
+    let options = {
+       output: path.resolve(localScriptDir,'fabric-dev-servers.tar.gz')
+    };
+    let metadata = await wget(src, options)
+
+    return gulp.src(options.output)
+    .pipe(gunzip())
+    .pipe(untar())
+    .pipe(gulp.dest(localScriptDir))
+});
+
+
+gulp.task('default', function () {
+
 })
 
-const log = (str)=>{console.log(str)}
+
 
 /**
  * This simply defines help task which would produce usage
@@ -68,7 +113,12 @@ gulp.task('postinstall',async () => {
  * 
  * @task {provision}
  */
-gulp.task('provision', run([startFabric_sh,createPeerAdminCard]));
+gulp.task('provision', ()=>{
+	console.log(startFabric_sh);
+  let fn = run([startFabric_sh,createPeerAdminCard]);
+  return fn();
+	
+} );
 
 
 /**

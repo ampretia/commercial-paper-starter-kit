@@ -20,6 +20,7 @@
   },
   "devDependencies": {
     "chalk": "^2.3.2",
+    "eslint": "^4.19.1",
     "gulp": "^3.9.1",
     "gulp-gunzip": "^1.0.0",
     "gulp-gzip": "^1.4.0",
