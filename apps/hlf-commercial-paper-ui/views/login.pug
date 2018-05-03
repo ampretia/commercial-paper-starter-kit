@@ -1,0 +1,40 @@
+doctype html
+html
+	head
+		title Login
+		include bootstrap-css.pug
+
+	body
+		include navbar.pug
+
+		div.container
+			div.row
+				div.well.col-lg-6.col-lg-offset-3
+					form(action='/auth/local', method='POST').form-vertical
+						include error-notifs.pug
+						fieldset
+							legend Login
+
+							p
+								a(target='_blank', href='http://localhost:4200/auth/github')#login-link
+									img(src='/static/images/github-mark.png', alt='GitHub login')
+
+							hr.horiz-divider
+
+							div.form-group
+								label(for="username").control-label Username
+								div
+									input(autocomplete="off", type="text", placeholder="Username", name="username").form-control#username
+
+							div.form-group
+								label(for="password").control-label Password
+								div
+									input(autocomplete="off", type="password", placeholder="Password", name="password").form-control#password
+
+							div.form-group
+								div
+									button(type="submit").btn.btn-primary Login
+
+							p
+								| No account? #[a(href='/auth/local/register') Register here]
+		include bootstrap-js.pug

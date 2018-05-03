@@ -1,0 +1,28 @@
+include mixins.pug
+
+nav.navbar.navbar-default.navbar-fixed-top
+	div.container
+		div.navbar-header
+			button(type="button", data-toggle="collapse", data-target="#navbar-collapse-content").navbar-toggle.collapsed
+				span.sr-only Toggle navigation
+				span.icon-bar
+				span.icon-bar
+				span.icon-bar
+			a.navbar-brand(href='/') Commercial Paper - #{companyInfo.names}
+
+		div.navbar-collapse.collapse#navbar-collapse-content
+			ul.nav.navbar-nav
+				li
+					a(href="/paper") Paper
+				if currentUser && currentUser.roles.indexOf('admin') > -1
+					li
+						a(href="/users") Users
+
+			ul.nav.navbar-nav.navbar-right
+				if companyInfo && companyInfo.balance
+					li
+						a(href="#") Balance: $
+							+formatNum(companyInfo.balance)
+						
+				li
+					a(href="/logout") Logout

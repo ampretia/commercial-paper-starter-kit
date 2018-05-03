@@ -1,0 +1,154 @@
+{
+    "card": "admin@bsn-local",
+    "BatchSize": 10,
+    "composer": {
+        "wallet": {
+            "type": "composer-wallet-filesystem",
+            "options": {
+                "storePath": "/home/matthew/github/cp-network-sk/composer-store"
+            }
+        }
+    },
+    "resources": {
+        "org.example.commercialpaper.Company": [
+            {
+                "$class": "org.example.commercialpaper.Company",
+                "symbol": "AAI",
+                "name": "Aardvark Investing",
+                "publicdid": {
+                    "$class": "org.example.commercialpaper.DID",
+                    "scheme": "did",
+                    "method": "sov",
+                    "identifier": "000000001"
+                  },
+                  "accountsManaged":[
+                    "resource:org.example.commercialpaper.Account#AAI-USD-001",
+                    "resource:org.example.commercialpaper.Account#AAI-GBP-001"
+                  ],
+                  "issuedNotTraded":[]
+            },
+            {
+                "$class": "org.example.commercialpaper.Company",
+                "symbol": "BAH",
+                "name": "Badger & Honey",
+                "publicdid": {
+                    "$class": "org.example.commercialpaper.DID",
+                    "scheme": "did",
+                    "method": "sov",
+                    "identifier": "000000002"
+                  },
+                  "accountsManaged":[
+                    "resource:org.example.commercialpaper.Account#BAH-USD-001",
+                    "resource:org.example.commercialpaper.Account#BAH-GBP-001"
+                  ],
+                  "issuedNotTraded":[]
+            },
+            {
+                "$class": "org.example.commercialpaper.Company",
+                "symbol": "AMI",
+                "name": "Ampretia Industries Inc.",
+                "publicdid": {
+                    "$class": "org.example.commercialpaper.DID",
+                    "scheme": "did",
+                    "method": "sov",
+                    "identifier": "000002323"
+                  },
+                  "accountsManaged":[
+                  ],
+                  "issuedNotTraded":[]
+            }
+
+        ],
+        "org.example.commercialpaper.Account": [
+            {
+                "$class": "org.example.commercialpaper.Account",
+                "ID": "AAI-USD-001",
+                "name": "USD-001",
+                "summary": "US Trading account 1",
+                "cashBalance": "1000000",
+                "assets":[]
+                
+            },
+            {
+                "$class": "org.example.commercialpaper.Account",
+                "ID": "BAH-USD-001",
+                "name": "USD-001",
+                "summary": "US Trading account 1",
+                "cashBalance": "1000000",
+                "assets":[]
+            },
+            {
+                "$class": "org.example.commercialpaper.Account",
+                "ID": "AAI-GBP-001",
+                "name": "GBP-001",
+                "summary": "UK Trading account 1",
+                "workingCurrency" :"STERLING",
+                "cashBalance": "1000000",
+                "assets":[]
+            },
+            {
+                "$class": "org.example.commercialpaper.Account",
+                "ID": "BAH-GBP-001",
+                "name": "GBP-001",
+                "summary": "UK Trading account 1",
+                "workingCurrency" :"STERLING",
+                "cashBalance": "1000000",
+                "assets":[]
+            }
+
+        ],        
+        "org.example.commercialpaper.Trader": [
+            {
+                "$class": "org.example.commercialpaper.Trader",
+                "participantId": "aliceA",
+                "firstName": "Alice",
+                "lastName": "Andrews",
+                "worksFor": "resource:org.example.commercialpaper.Company#AAI",
+                "manages":[],
+                "traderdid": {
+                    "$class": "org.example.commercialpaper.DID",
+                    "scheme": "did",
+                    "method": "sov",
+                    "identifier": "000000004"
+                  }
+            },
+            {
+                "$class": "org.example.commercialpaper.Trader",
+                "participantId": "bobB",
+                "firstName": "Bob",
+                "lastName": "Brown",
+                "worksFor": "resource:org.example.commercialpaper.Company#BAH",
+                "manages":[],
+                "traderdid": {
+                    "$class": "org.example.commercialpaper.DID",
+                    "scheme": "did",
+                    "method": "sov",
+                    "identifier": "000000003"
+                  }
+            }
+
+        ],
+             
+        "org.example.commercialpaper.Market": [
+            {
+                "$class": "org.example.commercialpaper.Market",
+                "ID": "US_BLUE_ONE",
+                "name": "US  paper market",
+                "maxMaturityTime": "270",
+                "papersForSale":[]    
+
+            },
+            {
+                "$class": "org.example.commercialpaper.Market",
+                "ID": "UK_BLUE_ONE",
+                "name": "UK  paper market",
+                "maxMaturityTime": "360",
+                "currency":"STERLING",
+                "papersForSale":[]    
+
+            }
+
+        ]        
+    },
+    "transactions": []
+}

@@ -1,0 +1,185 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * A Trader works for a Company, and has access to 1 or more accounts with cash in them.
+ * Commerical Paper can be issued and transfered, finally it will be redeemed
+ *
+ * Related models:
+ *  A Composer based Commerical Paper model
+ *   https://github.com/ajpauwels/hlf-commercial-paper
+ *
+ *  Provides the model that is used for doing fund clearences
+ *  https://github.com/nklincoln/composer-sample-networks/blob/fund-clearing/packages
+ *
+ * 
+ */
+namespace org.example.commercialpaper
+
+
+/**
+ * Definition of the types of currency
+ * A enum that ideally should be imported from a standard library.
+ */
+enum Currency {
+  o EURO
+  o STERLING
+  o USD
+  o YEN
+  o CHF
+  o CAD
+}
+
+/**
+ * Public Distributed Identifier
+ */
+ concept DID {
+   o String scheme default="did"
+   o String method default="sov"
+   o String identifier
+ }
+
+/**
+ * Participant that definies the entity that is a company that can participate in Paper trading
+ * This may be either an issuer of paper, or maybe a brokage/bank 
+ * @param {String} symbol Their identifier or stock trading symbol
+ * @param {String} name   Public name
+ */
+participant Company identified by symbol {
+  o String      symbol
+  o String      name
+  o DID         publicdid
+  --> Account[] accountsManaged
+  --> PaperOwnership[]  issuedNotTraded
+}
+
+/**
+ * An asset that permits a company to manage a number of accounts; each of which may be in a
+ * different currency, market, or be approved for certain traders only
+   */
+asset Account identified by ID {
+  o String	ID            
+  o String  summary          
+  o Currency workingCurrency default="USD"
+  o Double	cashBalance  
+  --> PaperOwnership[]  assets
+}
+
+/**
+ * @param {String} ID Concatenation: company-identifier,paper-cusip (e.g. 'fabric.hyperledger.cp.Company#ACME,ABCDEF012')
+ * @param {CommericalPaper} paper  Paper owned
+ * @param {Company} owner Company which owns this quantity of this paper
+ * @param {quantity} Amount of paper owned
+ * @param {quantityForSale} Amount that the owner is willing to sell
+ */
+asset PaperOwnership identified by ID {
+  o String ID					 
+  --> CommercialPaper paper		
+  --> Company owner				
+  o Integer quantity			 	// should be deprecated
+}
+
+/**
+ * Listing of a Commerical Paper within a given market
+ */
+asset PaperListing identified by ID {
+  o String ID
+  --> CommercialPaper  paper
+  --> Company          currentHolder
+  o Integer            quantityForSale
+  o Double             discount   range=[0.0,]
+}
+
+/**
+ * The main commerical paper asset 
+ * This is a generic commerical paper asset - not specific to any market
+ * @param {Double} par         The market value of the commercial paper
+ * @param {String} ticker      String based name for readability
+ * @param {Integer} qtyIssued  Number of papers issued
+ * @param {Integer} maturity   Number of days to maturity (minimum = 1 day --> 270 days depending on market)
+ * @param {Company} issuer     Company which issued the commercial paper
+ * @param {DateTime} issueDate timestamp at the point of issue
+ */
+asset CommercialPaper identified by CUSIP {
+	o String      CUSIP       
+	o String      ticker     default="" 
+  o Currency    currency   default="USD"
+	o Double      par        range=[0.0,]         
+	o Integer     maturity   range=[1,]  
+	--> Company   issuer     
+	o DateTime    issueDate  
+}
+
+/**
+ * Represents a trader working at a specific company, who has permission to trader
+ * This trader doesn't have a block chain identity so really shouldn't be a participant even though in this 
+ * case this is refering to an actual person
+ */
+participant Trader identified by participantId {
+  o String participantId
+  o String firstName
+  o String lastName
+  --> Company worksFor
+  --> Account[] manages
+  o DID    traderdid
+}
+
+/**
+ * A market in which papers are listed, allows for variable rules on how things are traded
+ */
+asset Market identified by ID {
+  o String ID
+  o String name
+  o Currency         currency   default="USD"
+  --> PaperListing[] papersForSale
+  o Integer          maxMaturityTime range=[1,]
+}
+
+
+/**
+ * Redeems a paper when it matures
+ */
+transaction RedeemPaper {
+  --> CommercialPaper maturedPaper
+}
+
+/**
+ * Issue the trade of a paper from the existing owner to the new owner
+ */
+transaction PurchasePaper {
+	--> PaperListing listing       
+  o Integer        qty
+  --> Account account
+}
+
+/**
+ * Issues paper 
+ * This wil be sent in by a trader and therefore the issuing company is inferred
+ */
+transaction CreatePaper {
+	o String    CUSIP         
+  o String    ticker
+	o Integer   qty      range=[0,]
+  o Integer   maturity range=[0,]
+  o Currency  workingCurrency default="USD"
+  o Double    par      range=[0.0,]
+  o Integer   numberToCreate default=1 range=[1,]
+}
+
+transaction ListOnMarket {
+  --> Market market
+  o Integer qty       // deprecated
+  o Double  discount range=[0.0,]
+  --> CommercialPaper[] papersToList
+}

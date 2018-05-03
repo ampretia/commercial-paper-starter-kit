@@ -1,0 +1,26 @@
+{
+  "name": "commercial-paper-network",
+  "version": "0.0.30",
+  "description": "Business Network for Commercial Paper Trading",
+  "scripts": {
+    "prepublish": "mkdirp ./dist && composer archive create --sourceType dir --sourceName . -a ./dist/commercial-paper-network.bna",
+    "pretest": "npm run lint",
+    "lint": "eslint .",
+    "test": "nyc mocha -t 0 test/*.js && cucumber-js"
+  },
+  "author": "Hyperledger",
+  "email": "whitemat@uk.ibm.com",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "chai": "latest",
+    "chai-as-promised": "latest",
+    "cucumber": "^2.2.0",
+    "eslint": "latest",
+    "nyc": "latest",
+    "mkdirp": "latest",
+    "mocha": "latest"
+  },
+  "dependencies": {
+    "composer-cli": "^0.19.4"
+  }
+}

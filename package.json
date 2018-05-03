@@ -5,7 +5,7 @@
   "private": true,
   "repository": {
     "type": "git",
-    "url": "https://github.com/hyperledger/composer-tools.git"
+    "url": "git+https://github.com/hyperledger/composer-tools.git"
   },
   "author": "Hyperledger Composer",
   "license": "Apache-2.0",
@@ -15,11 +15,13 @@
     "solutions"
   ],
   "scripts": {
-    "prepare": "npm run build-archives",
-    "build-archives": "gulp --gulpfile .travis/gulp.js"
+    "cyclebna": "./.localtoolchain/cycle-bna.sh",
+    "bootstrap": "node ./contracts/commercial-paper-network/loadAssets.js && ./contracts/commercial-paper-network/identities.sh" 
   },
   "devDependencies": {
     "chalk": "^2.3.2",
+    "composer-common": "^0.19.4",
+    "composer-wallet-filesystem": "^0.19.4",
     "eslint": "^4.19.1",
     "gulp": "^3.9.1",
     "gulp-gunzip": "^1.0.0",
@@ -32,5 +34,15 @@
     "jsome": "^2.5.0",
     "mkdirp": "^0.5.1",
     "node-wget-promise": "^0.1.4"
-  }
+  },
+  "dependencies": {
+    "composer-cli": "^0.19.4",
+    "composer-client": "^0.19.4",
+    "composer-connector-hlfv1": "^0.19.4"
+  },
+  "bugs": {
+    "url": "https://github.com/hyperledger/composer-tools/issues"
+  },
+  "homepage": "https://github.com/hyperledger/composer-tools#readme",
+  "main": "gulpfile.js"
 }
