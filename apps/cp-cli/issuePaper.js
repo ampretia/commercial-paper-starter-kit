@@ -20,6 +20,8 @@ const fs = require('fs');
 const path = require('path');
 const winston = require('winston');
 const Table = require('cli-table-redemption');
+const boxen = require('boxen');
+const chalk = require('chalk');
 const inquirer = require('inquirer');
 const uuidv1 = require('uuid/v1');
 
@@ -89,10 +91,11 @@ async function submitTx(userCardName){
 
         // let table = new Table();
         const businessNetworkConnection = new BusinessNetworkConnection();
-        LOG.info('> Deployed network - now Connecting business network connection');
+        LOG.info('> Connecting business network connection',userCardName);
         businessNetworkDefinition = await businessNetworkConnection.connect(userCardName);
         serializer = businessNetworkDefinition.getSerializer();
 
+        console.log(boxen(chalk.blue.bold('Commerical Paper Trading - Paper Issuing'),{padding:1,margin:1}));
 
         let answers = await getInput();
         let factory = businessNetworkDefinition.getFactory();
@@ -107,7 +110,7 @@ async function submitTx(userCardName){
 
         createTx.CUSIP = uuidv1();
 
-        console.log('Submitting transaction for new paper');
+        LOG.info('> Submitting transaction for new paper');
         await businessNetworkConnection.submitTransaction(createTx);
 
         let listTx = factory.newTransaction(ns,'ListOnMarket');
@@ -120,9 +123,9 @@ async function submitTx(userCardName){
             listTx.papersToList.push(factory.newRelationship(ns,'CommercialPaper',`${createTx.CUSIP}#${i}`));
         }
 
-        console.log('Listing on market');
+        LOG.info('> Listing on market');
         await businessNetworkConnection.submitTransaction(listTx);
-
+        LOG.info(chalk`> Run   {bold CP_COMPANY=${userCardName} node market} to see the listed paper`);
         await businessNetworkConnection.disconnect();
     } catch (error) {
         LOG.error(error);

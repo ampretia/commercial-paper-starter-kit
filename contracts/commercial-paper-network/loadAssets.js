@@ -77,4 +77,4 @@ async function loadData(fullPathJson){
 
 }
 
-loadData('./data.json');
+loadData(path.resolve(__dirname,'data.json'));

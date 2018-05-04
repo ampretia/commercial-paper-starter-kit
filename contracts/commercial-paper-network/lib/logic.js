@@ -13,7 +13,7 @@
  */
 'use strict';
 
-/* global getAssetRegistry getFactory emit currentParticipant*/
+/* global getAssetRegistry getFactory emit currentParticipant request*/
 
 const ns = 'org.example.commercialpaper';
 
@@ -38,7 +38,7 @@ async function purchasePaper(tx) {  // eslint-disable-line no-unused-vars
     let listing = tx.listing;
     // listing.quantityForSale -= tx.qty;
     await listingRegistry.remove(listing.getIdentifier());
-    market.papersForSale.filter((e)=>{
+    market.papersForSale = market.papersForSale.filter((e)=>{
         return e.getIdentifier() !== listing.getIdentifier();
     });
     await marketRegistry.update(market);
@@ -93,7 +93,24 @@ async function listOnMarket(tx) {  // eslint-disable-line no-unused-vars
         await marketRegistry.update(market);
 
         // todo - remove from the list in the companies array
+
+        try {
+
+            await request.post({ uri:  'https://api.pushover.net/1/messages.json',
+                form: {
+                    token:'ayq7zvsxc641sfna65njkik1x9y25b',
+                    user:'u71fr7r5xvopowybac6pwt9ta39p2r',
+                    message:'New Papers listed from '+company.name
+                }
+            });
+
+        } catch (err){
+            console.log(err);
+        }
     }
+
+
+
 }
 
 /**

@@ -16,21 +16,16 @@
  */
 
 
-const fs = require('fs');
-const path = require('path');
+
 const winston = require('winston');
 const Table = require('cli-table-redemption');
 const chalk = require('chalk');
-const Pretty = require('prettyjson');
 const boxen = require('boxen');
-
-const ns = 'org.example.commercialpaper';
-// Require the client API
 const BusinessNetworkConnection = require('composer-client').BusinessNetworkConnection;
 const AdminConnection = require('composer-admin').AdminConnection;
-let businessNetworkDefinition;
 
-let serializer;
+const ns = 'org.example.commercialpaper';
+let businessNetworkDefinition;
 
 winston.loggers.add('app', {
     console: {
@@ -42,10 +37,9 @@ winston.loggers.add('app', {
 
 const LOG = winston.loggers.get('app');
 
-
 /**
  * Main Function
- * @param {String} cardName userCardName
+ * @param {String} userCardName userCardName
  */
 async function showCompany(userCardName){
     try {
@@ -63,7 +57,6 @@ async function showCompany(userCardName){
         LOG.info('> Connecting business network connection');
         LOG.info(`> ${userCardName}`);
         businessNetworkDefinition = await businessNetworkConnection.connect(userCardName);
-        serializer = businessNetworkDefinition.getSerializer();
 
         let companiesRegistry = await businessNetworkConnection.getRegistry(`${ns}.Company`);
         let accountRegistry = await businessNetworkConnection.getRegistry(`${ns}.Account`);
@@ -75,7 +68,7 @@ async function showCompany(userCardName){
         console.log(boxen(chalk.blue.bold(company.symbol)+' '+chalk.blue(company.name),{padding:1,margin:1}));
 
 
-        console.log(`Public DID = ${company.publicdid.scheme}:${company.publicdid.method}:${company.publicdid.identifier}`);
+        console.log(chalk`{bold Public DID} ${company.publicdid.scheme}:${company.publicdid.method}:${company.publicdid.identifier}`);
         let table = new Table();
 
         for (const paperref of company.issuedNotTraded){
@@ -85,13 +78,14 @@ async function showCompany(userCardName){
             table.push(data);
         }
 
-        console.log('\nPapers issued but not yet traded');
-        console.log(table.toString());
+        console.log(chalk`\n{bold Papers issued but not yet traded:}`);
+        console.log(table.length>0?table.toString():'<none>');
 
+        console.log(chalk`\n{bold Trading Accounts:}`);
 
         for (const accountRef of company.accountsManaged){
             let account = await accountRegistry.get(accountRef.getIdentifier());
-            console.log(chalk`\n[${account.ID}] {green ${account.summary}}, {green ${account.workingCurrency}}, {white ${account.cashBalance}}`);
+            console.log(chalk`\n[{bold ${account.ID}}] {green ${account.summary}}, {green ${account.workingCurrency}}, {white ${account.cashBalance}}`);
 
             let listingsTable = new Table({head:['ID','Ticker','Currency','Par','Maturity','Issue Date']});
             for (const paperRef of account.assets){

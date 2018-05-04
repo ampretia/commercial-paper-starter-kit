@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+
+    <title>commercial-paper-network</title>
+
+    <meta name="viewport" content="width=device-width">
+    <link rel="icon" type="image/x-icon" href="/api-doc/composer/unstable/favicon.ico">
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+
+
+    <link href="./assets/css/normalize.css" rel="stylesheet">
+    <link href="./assets/css/new-style.min.css" rel="stylesheet">
+    <link href="./assets/css/grid-layout.min.css" rel="stylesheet">
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.6.0/clipboard.min.js"></script>
+
+</head>
+
+
+<body class="">
+
+    <div class="SiteWrapper">
+        <div class="content">
+            <article class="docs-container">
+
+                 <div class="page-sidebar-grid" id="off-canvas">
+                
+                    <div class="docs-pagenav-grid">
+                        <!-- Navigation -->
+                        <nav class="navbar-docs" role="navigation">
+                            <div class="search-form">
+                            <img width="200px" src=""></img>
+                            </div>
+
+                            <!-- Brand and toggle get grouped for better mobile display -->
+                            <a class="navbar-brand" href="./index.html">
+                                <b>commercial-paper-network</b>@</a>0.0.32
+                            <!-- Collect the nav links, forms, and other content for toggling -->
+                            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                                <div class="top-nav-docs">
+                                    <a href="./index.html">Summary</a>
+                                    <a href="./assets.html">Assets</a>
+                                    <a href="./transactions.html">Transactions</a>
+                                    <a href="./participants.html">Participants</a>          
+                                    <a href="./events.html">Events</a>                          
+                                    <a href="./enums.html">Enums</a>  
+                
+                       <a href="./acls.html">ACLs</a>                  
+                                </div>
+                            </div>
+                        </nav>
+                          
+                           
+                            <div class="docs-current-page-grid">
+                                <p>Transactions</p>
+                            </div>
+                            
+                    </div>
+                    
+                  <nav class="context-nav">
+                    <ul>
+                       
+                            
+                                <li><p><a href="#lib/logic.js"><b>lib/logic.js</b></a></p>
+                                <ul>
+                                 
+                                    <li><p><a href="#purchasepaper"><b>purchasePaper</b></a></p></li>             
+                                
+                                    <li><p><a href="#listonmarket"><b>listOnMarket</b></a></p></li>             
+                                
+                                    <li><p><a href="#createpaper"><b>createPaper</b></a></p></li>             
+                                
+                                </ul></li>
+                            
+                    
+
+                    </ul>
+
+                    </nav>
+  
+                </div>
+
+
+
+                <div class="page-content-grid">
+                    <section class="content-chunk" id="readme">
+                    <h1 id="transaction-functions-detail">Transaction Functions Detail</h1>
+<p><em>Identifier</em></p>
+<p>lib/logic.js</p>
+<p><em>Functions</em></p>
+<h4 id="purchasepaper">purchasePaper</h4>
+<pre><code class="language-javascript">async function purchasePaper(tx) {  // eslint-disable-line no-unused-vars
+
+    let market = tx.market;
+    let companyBuying = getCurrentParticipant();
+    // validation
+    // tbd
+    // if (tx.qty &gt; tx.listing.quantityForSale){
+    //     throw new Error('Insufficient paper volume for this trade');
+    // }
+
+    // deprecate the holdings on that market by the right amount
+    const listingRegistry = await getAssetRegistry(`${ns}.PaperListing`);
+    const marketRegistry = await getAssetRegistry(`${ns}.Market`);
+    let listing = tx.listing;
+    // listing.quantityForSale -= tx.qty;
+    await listingRegistry.remove(listing.getIdentifier());
+    market.papersForSale = market.papersForSale.filter((e)=&gt;{
+        return e.getIdentifier() !== listing.getIdentifier();
+    });
+    await marketRegistry.update(market);
+
+    console.log('Removed the listing');
+    // change the paper to be held by the new owner
+    let ownership = getFactory().newResource(ns,'PaperOwnership',companyBuying.symbol+'#'+listing.paper.CUSIP);
+    const ownershipRegistry = await getAssetRegistry(`${ns}.PaperOwnership`);
+    ownership.paper = listing.paper;
+    ownership.owner = companyBuying;
+    ownership.quantity = 1;//tx.qty;
+
+    console.log('adding the ownerhsip');
+    // add it to their listings.
+    await ownershipRegistry.add(ownership);
+
+    console.log('adding to the account');
+    // now need to get the account that this was purchased via and update that
+    tx.account.assets.push(getFactory().newRelationship(ns,'PaperOwnership',companyBuying.symbol+'#'+listing.paper.CUSIP));
+
+    let accountRegistry = await getAssetRegistry(`${ns}.Account`);
+    await accountRegistry.update(tx.account);
+}
+</code></pre>
+<h4 id="listonmarket">listOnMarket</h4>
+<pre><code class="language-javascript">async function listOnMarket(tx) {  // eslint-disable-line no-unused-vars
+
+    let market = tx.market;
+    let company =  getCurrentParticipant();
+    // validation
+    // market can accept the papers to be listed, currency correct etc etc.
+    const marketRegistry = await getAssetRegistry(`${ns}.Market`);
+    const listingRegistry = await getAssetRegistry(`${ns}.PaperListing`);
+
+    //
+    for (const paper of tx.papersToList) {
+        let id = market.getIdentifier()+'='+paper.CUSIP;
+        let listing = getFactory().newResource(ns,'PaperListing',id);
+        listing.paper = paper;
+        listing.currentHolder = company;
+        listing.quantityForSale = 1;
+        listing.discount = tx.discount;
+
+        await listingRegistry.add(listing);
+
+        let listingRelationship = getFactory().newRelationship(ns,'PaperListing',id);
+        market.papersForSale.push(listing);
+        await marketRegistry.update(market);
+
+        // todo - remove from the list in the companies array
+
+        try {
+
+            await request.post({ uri:  'https://api.pushover.net/1/messages.json',
+                form: {
+                    token:'ayq7zvsxc641sfna65njkik1x9y25b',
+                    user:'u71fr7r5xvopowybac6pwt9ta39p2r',
+                    message:'New Papers listed from '+company.name
+                }
+            });
+
+        } catch (err){
+            console.log(err);
+        }
+    }
+
+
+
+}
+</code></pre>
+<h4 id="createpaper">createPaper</h4>
+<pre><code class="language-javascript">async function createPaper(tx) {  // eslint-disable-line no-unused-vars
+
+    // Get the registry to store this new asset in
+    let regName = `${ns}.CommercialPaper`;
+    const assetRegistry = await getAssetRegistry(regName);
+    const companyRegistry = await getParticipantRegistry(`${ns}.Company`);
+    let company =  getCurrentParticipant();
+    const ownershipRegistry = await getAssetRegistry(`${ns}.PaperOwnership`);
+    for (let i=0; i&lt;tx.numberToCreate; i++){
+    // draft #1 create the paper and add ito the registry
+        let paperId= `${tx.CUSIP}#${i}`;
+        let paper = getFactory().newResource(ns,'CommercialPaper',paperId);
+        paper.ticker = tx.ticker;
+        paper.par = tx.par;
+        paper.currency = tx.workingCurrency;
+        paper.maturity = tx.maturity;
+        paper.issueDate = tx.timestamp;
+
+        // set the issuer and owner to be company that the current participant works for
+        paper.issuer = company;
+
+        // Update the asset in the asset registry.
+        await assetRegistry.add(paper);
+
+        console.log('Added the new paper to the registry '+paperId);
+
+        // add it to the ownership of the company that issues it
+        // change the paper to be held by the new owner
+        let ownership = getFactory().newResource(ns,'PaperOwnership',company.symbol+'#'+paperId);
+        ownership.paper = paper;
+        ownership.owner = company;
+        ownership.quantity = 0;
+
+
+        // add it to their listings.
+        await ownershipRegistry.add(ownership);
+        let ownershipRelation = getFactory().newRelationship(ns,'PaperOwnership',company.symbol+'#'+paperId);
+        company.issuedNotTraded.push(ownershipRelation);
+        await companyRegistry.update(company);
+    }
+
+}
+</code></pre>
+ 
+                    </section>
+                </div>
+                <!-- Otherwise, have the main content fill all 12 columns... -->
+
+                <div class="PageNavigation">
+
+
+                </div>
+            </article>
+        </div>
+
+
+
+
+
+    </div>
+    <script src="./assets/js/nav.js"></script>
+</body>
+
+</html>
+
+
+
+
+

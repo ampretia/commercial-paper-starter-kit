@@ -19,6 +19,8 @@
 const fs = require('fs');
 const path = require('path');
 const winston = require('winston');
+const boxen = require('boxen');
+const chalk = require('chalk');
 const Table = require('cli-table-redemption');
 const inquirer = require('inquirer');
 const uuidv1 = require('uuid/v1');
@@ -48,6 +50,11 @@ async function getInput(){
 
     let questions = [
         {
+            name: 'marketId',
+            type: 'input',
+            message: 'Enter ID of the Market this paper is listed in'
+        },
+        {
             name: 'paperListingId',
             type: 'input',
             message: 'Enter "ID" name of the paper to purchase'
@@ -73,16 +80,18 @@ async function submitTx(userCardName){
 
         // let table = new Table();
         const businessNetworkConnection = new BusinessNetworkConnection();
-        LOG.info('> Deployed network - now Connecting business network connection');
+        LOG.info('> Connecting business network connection',userCardName);
         businessNetworkDefinition = await businessNetworkConnection.connect(userCardName);
         serializer = businessNetworkDefinition.getSerializer();
 
 
+        console.log(boxen(chalk.blue.bold('Commerical Paper Trading - Paper Trading'),{padding:1,margin:1}));
         let answers = await getInput();
         let factory = businessNetworkDefinition.getFactory();
 
 
         let purchaseTx = factory.newTransaction(ns,'PurchasePaper');
+        purchaseTx.market = factory.newRelationship(ns,'Market',answers.marketId);
         purchaseTx.listing = factory.newRelationship(ns,'PaperListing',answers.paperListingId);
         purchaseTx.qty=1;
         purchaseTx.account = factory.newRelationship(ns,'Account',answers.accountId);

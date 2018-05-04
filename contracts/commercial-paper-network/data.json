@@ -1,11 +1,11 @@
 {
-    "card": "admin@bsn-local",
+    "card": "admin@local",
     "BatchSize": 10,
     "composer": {
         "wallet": {
             "type": "composer-wallet-filesystem",
             "options": {
-                "storePath": "/home/matthew/github/cp-network-sk/composer-store"
+                "storePath": "/home/matthew/github/cp-network-sk/_local/composer-store"
             }
         }
     },
@@ -19,7 +19,7 @@
                     "$class": "org.example.commercialpaper.DID",
                     "scheme": "did",
                     "method": "sov",
-                    "identifier": "000000001"
+                    "identifier": "ai3ngBhByaxg35"
                   },
                   "accountsManaged":[
                     "resource:org.example.commercialpaper.Account#AAI-USD-001",
@@ -35,7 +35,7 @@
                     "$class": "org.example.commercialpaper.DID",
                     "scheme": "did",
                     "method": "sov",
-                    "identifier": "000000002"
+                    "identifier": "k47890623hM0hvfd"
                   },
                   "accountsManaged":[
                     "resource:org.example.commercialpaper.Account#BAH-USD-001",
@@ -51,7 +51,7 @@
                     "$class": "org.example.commercialpaper.DID",
                     "scheme": "did",
                     "method": "sov",
-                    "identifier": "000002323"
+                    "identifier": "7nbGDFklbFFl8lkhx"
                   },
                   "accountsManaged":[
                   ],

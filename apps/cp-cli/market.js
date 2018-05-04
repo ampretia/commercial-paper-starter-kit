@@ -21,6 +21,7 @@ const path = require('path');
 const winston = require('winston');
 const Table = require('cli-table-redemption');
 const chalk = require('chalk');
+const boxen = require('boxen');
 const ns = 'org.example.commercialpaper';
 // Require the client API
 const BusinessNetworkConnection = require('composer-client').BusinessNetworkConnection;
@@ -46,6 +47,9 @@ const LOG = winston.loggers.get('app');
 async function showMarket(userCardName){
     try {
 
+        console.log(boxen(chalk.blue.bold('Commerical Paper Trading - Markets'),{padding:1,margin:1}));
+
+
         // let table = new Table();
         const businessNetworkConnection = new BusinessNetworkConnection();
         LOG.info('> Connecting business network connection');
@@ -54,8 +58,7 @@ async function showMarket(userCardName){
         serializer = businessNetworkDefinition.getSerializer();
 
         let companiesRegistry = await businessNetworkConnection.getRegistry(`${ns}.Company`);
-        let accountRegistry = await businessNetworkConnection.getRegistry(`${ns}.Account`);
-        let paperOwnershipRegistry = await businessNetworkConnection.getRegistry(`${ns}.PaperOwnership`);
+
         let paperListingRegistry = await businessNetworkConnection.getRegistry(`${ns}.PaperListing`);
         let paperRegistry = await businessNetworkConnection.getRegistry(`${ns}.CommercialPaper`);
         let marketRegistry = await businessNetworkConnection.getRegistry(`${ns}.Market`);
@@ -63,7 +66,7 @@ async function showMarket(userCardName){
         let cs = await marketRegistry.getAll();
         for (const market of cs) {
             let listingsTable = new Table({head:['ID','Discount','Ticker','Par','Maturity','Issuer']});
-            console.log(chalk`\nCurrent state of {blue ${market.ID}}`);
+            console.log(chalk`\n{bold Current listings in} {blue ${market.ID}}`);
             for (const paperListingRef of market.papersForSale) {
                 let paperListing = await paperListingRegistry.get(paperListingRef.getIdentifier());
                 let paper = await paperRegistry.get(paperListing.paper.getIdentifier());

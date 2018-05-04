@@ -15,8 +15,11 @@
     "solutions"
   ],
   "scripts": {
+    "localfabric":"./.localtoolchain/cycle-local-fabric.sh",
     "cyclebna": "./.localtoolchain/cycle-bna.sh",
-    "bootstrap": "node ./contracts/commercial-paper-network/loadAssets.js && ./contracts/commercial-paper-network/identities.sh" 
+    "bootstrap": "node ./contracts/commercial-paper-network/loadAssets.js",
+    "postbootstrap":"./contracts/commercial-paper-network/identities.sh",
+    "monitor":"./.localtoolchain/monitordocker.sh" 
   },
   "devDependencies": {
     "chalk": "^2.3.2",
