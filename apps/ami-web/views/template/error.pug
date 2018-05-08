@@ -1,0 +1,26 @@
+extends layout.pug
+	
+	
+//- --------------- Header -------------- //
+block custom_header
+	script(type='text/javascript').
+		$(document).ready(function(){
+			
+		});
+	script(src='https://unpkg.com/axios/dist/axios.min.js')
+		
+		
+//- --------------- Navigation Bar  -------------- //
+block navpanel
+	#logo Ampretia
+	
+	
+//- --------------- Main Stuff  -------------- //
+block content
+	#contentPanel
+		
+		h1 Error: #{bag.error.status}
+		center
+			h2 #{bag.error.msg}
+			
+		hr

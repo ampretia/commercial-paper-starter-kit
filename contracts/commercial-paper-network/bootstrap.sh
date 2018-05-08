@@ -2,6 +2,9 @@
 # Grab the parent (root) directory.
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/." && pwd )"
 
+node "${DIR}"/loadAssets.js
+
+
 npx composer identity issue --card admin@local -u AAI -a org.example.commercialpaper.Company#AAI --file "${DIR}"/AAI@commercial-paper-network.card
 npx composer card import --file "${DIR}"/AAI@commercial-paper-network.card --card AAI@local
 npx composer network ping --card AAI@local

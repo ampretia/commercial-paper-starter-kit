@@ -1,0 +1,26 @@
+/**
+ * Access control rules for supplychain
+ */
+rule AllAccess {
+	description: "All companies should be able to read components of the network"
+	participant: "org.hyperledger.composer.system.Participant"
+	operation: ALL
+	resource: "org.hyperledger.composer.system.**"
+	action: ALLOW  
+}
+
+rule NetworkAdmin {
+	description: "All companies should be able to read components of the network"
+	participant: "org.hyperledger.composer.system.NetworkAdmin"
+	operation: ALL
+	resource: "fabric.hyperledger.cp.**"
+	action: ALLOW  
+}
+
+rule AllAccessPaper {
+	description: "Anyone can do anything"
+	participant: "fabric.hyperledger.cp.Company"
+	operation: ALL
+	resource: "fabric.hyperledger.cp.**"
+	action: ALLOW
+}

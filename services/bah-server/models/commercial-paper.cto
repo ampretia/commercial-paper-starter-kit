@@ -1,0 +1,53 @@
+/**
+ * Commercial paper network model
+ */
+namespace fabric.hyperledger.cp
+
+/** Assets **/
+asset CommercialPaper identified by CUSIP {
+  o String CUSIP				// Identifies the commercial paper in the financial market
+  o Double par					// The market value of the commercial paper
+  o Integer quantityIssued		// Number of papers issued
+  o Double discount				// The percent discount from par that the paper is sold at
+  o Integer maturity			// Number of days to maturity (minimum = 1 day / 24 hours)
+  --> Company issuer			// Company which issued the commercial paper
+  o DateTime issuedTimestamp	// UNIX timestamp when the paper was issued
+}
+
+asset PaperOwnership identified by ID {
+  o String ID					// Concatenation: company-identifier,paper-cusip (e.g. 'fabric.hyperledger.cp.Company#ACME,ABCDEF012')
+  --> CommercialPaper paper		// Paper owned
+  --> Company owner				// Company which owns this quantity of this paper
+  o Integer quantity			// Amount of paper owned
+  o Integer quantityForSale		// Amount that the owner is willing to sell
+}
+
+/** Participants **/
+participant Company identified by name {
+  o String name					// Public name of the company (e.g. IBM)
+  o String identifier			// Six character CUSIP identifier
+  o Double balance				// Amount of money owned by the company
+}
+
+/** Transactions **/
+transaction IssuePaper {
+  o String CUSIP				// Identifies the commercial paper in the financial market
+  o Double par					// The market value of the commercial paper
+  o Integer quantityIssued		// Number of papers issued
+  o Double discount				// The percent discount from par that the paper is sold at
+  o Integer maturity			// Number of days to maturity (minimum = 1 day / 24 hours)
+  --> Company issuer			// Company which issued the commercial paper
+  o DateTime issuedTimestamp	// UNIX timestamp when the paper was issued
+}
+
+transaction PurchasePaper {
+  --> CommercialPaper paper
+  --> Company buyer
+  o Integer quantity
+  o Integer quantityForSale
+}
+
+transaction SellPaper {
+  --> PaperOwnership ownership
+  o Integer quantityToSell
+}

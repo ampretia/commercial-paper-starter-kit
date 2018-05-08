@@ -1,0 +1,62 @@
+extends template/layout
+	
+	
+//- --------------- Header -------------- //
+block custom_header
+	script(src='/js/part2.js')
+	script(src='/js/blockchain.js')
+	script(type='text/javascript').
+		$(document).ready(function(){
+			
+		});
+		
+		
+//- --------------- Navigation Bar  -------------- //
+block navpanel
+	include template/nav_part2
+	
+	
+//- --------------- Main Stuff  -------------- //
+block content
+	#contentPanel
+		#loginContainer
+			h1 Loging
+			hr
+
+			form(method="POST" action="#" style="text-align: center;")
+				p.hint
+					| !{bag.session.error_msg}
+					br
+					br
+				p
+					.hint Company ID
+					input(type="radio" name="username" hidden)
+					input(type="text" placeholder="username" name="username" required)
+				p
+					.hint Password
+					input(type="password" name="password" required)
+				button(type="submit")#loginButton Login
+		br
+		br
+		br
+		//- #registerContainer
+		//- 	h1 Register
+		//- 	hr
+
+		//- 	form(method="POST" action="#" style="text-align: center;")
+		//- 		p.hint
+		//- 			| !{bag.session.reg_error_msg}
+		//- 			| !{bag.session.registration}
+		//- 			br
+		//- 			br
+		//- 		p
+		//- 			.hint Desired Enroll ID
+		//- 			input#register_username(type="text" placeholder="enrollID" name="username" required)
+		//- 		button(type="submit")#registerButton Register
+		//- 		br
+		//- 		br
+		//- 		p.
+		//- 			User roles are assigned through tags in the user name.  Include the string 'auditor' in your
+		//- 			user name to register as that user type.  Everyone else is will be considered a regular user.
+		//- 			Updates to the chaincode will remove this limitation in the future.
+

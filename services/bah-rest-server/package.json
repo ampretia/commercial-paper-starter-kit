@@ -1,0 +1,22 @@
+{
+  "name": "bah-rest-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start_ldap": "PM2_HOME=.pm2 pm2 start --wait-ready scripts/ldap.js",
+    "stop_ldap": "PM2_HOME=.pm2 pm2 stop scripts/ldap.js || true"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "composer-rest-server": "^0.19.4",
+    "jsome": "^2.5.0",
+    "ldapjs": "^1.0.2",
+    "loopback-connector-mongodb": "^3.4.3",
+    "passport-ldapauth": "^2.0.0",
+    "pm2": "^2.10.3",
+    "request-promise-any": "^1.0.5"
+  }
+}

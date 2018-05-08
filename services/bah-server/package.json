@@ -1,0 +1,79 @@
+{
+  "engines": {
+    "composer": "^0.11.0 || ^0.12.0"
+  },
+  "name": "commercial-paper",
+  "version": "0.1.0",
+  "description": "A network for submitting, tracking, and auditing commercial paper transactions",
+  "scripts": {
+    "pretest": "npm run lint",
+    "lint": "eslint .",
+    "postlint": "npm run licchk",
+    "licchk": "license-check",
+    "postlicchk": "npm run doc",
+    "doc": "jsdoc --pedantic --recurse -c jsdoc.json",
+    "test-inner": "mocha -t 0 --recursive && cucumber-js",
+    "test-cover": "nyc npm run test-inner",
+    "test": "npm run test-inner",
+    "mongo": "docker run -d --name mongo --network composer_default -p 27017:27017 mongo"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "keywords": [
+    "commercial paper",
+    "finance"
+  ],
+  "author": "Hyperledger Composer",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "browserfs": "^1.2.0",
+    "chai": "^3.5.0",
+    "chai-as-promised": "^6.0.0",
+    "cucumber": "^2.2.0",
+    "eslint": "^3.6.1",
+    "istanbul": "^0.4.5",
+    "jsdoc": "^3.4.1",
+    "license-check": "^1.1.5",
+    "mkdirp": "^0.5.1",
+    "mocha": "^3.2.0",
+    "moment": "^2.17.1",
+    "nyc": "^11.0.2"
+  },
+  "license-check-config": {
+    "src": [
+      "**/*.js",
+      "!./coverage/**/*",
+      "!./node_modules/**/*",
+      "!./out/**/*",
+      "!./scripts/**/*"
+    ],
+    "path": "header.txt",
+    "blocking": true,
+    "logInfo": false,
+    "logError": true
+  },
+  "nyc": {
+    "exclude": [
+      "coverage/**",
+      "features/**",
+      "out/**",
+      "test/**"
+    ],
+    "reporter": [
+      "text-summary",
+      "html"
+    ],
+    "all": true,
+    "check-coverage": true,
+    "statements": 100,
+    "branches": 100,
+    "functions": 100,
+    "lines": 100
+  },
+  "dependencies": {
+    "composer-rest-server": "^0.19.4",
+    "loopback-connector-mongodb": "^3.3.0"
+  }
+}

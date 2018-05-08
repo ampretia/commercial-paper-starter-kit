@@ -1,0 +1,18 @@
+{
+   "ldap": {
+        "provider": "ldap",
+        "module": "passport-ldapauth",
+        "authPath": "/auth/ldap",
+        "callbackURL": "/auth/ldap/callback",
+        "successRedirect": "/",
+        "failureRedirect": "/failure",
+        "authScheme": "ldap",
+        "server": {
+            "url": "ldap://localhost:${port}",
+            "bindDN": "cn=root,dc=example,dc=org",
+            "bindCredentials": "secret",
+            "searchBase": "dc=example,dc=org",
+            "searchFilter": "(uid={{username}})"
+        }
+    }
+}

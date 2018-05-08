@@ -9,6 +9,8 @@ let run = require('gulp-run-command').default;
 const path= require('path');
 const localScriptDir = path.join(__dirname,'.localtoolchain');
 const cyclelocalfabric_sh = path.resolve(localScriptDir,'cycle-local-fabric.sh');
+const startnetwork_sh = path.resolve(localScriptDir,'start-network.sh');
+const bootstrap_sh = path.resolve('.','contracts','commercial-paper-network','bootstrap.sh');
 
 const jsome = require('jsome');
 
@@ -57,8 +59,6 @@ gulp.task('default', ['help']);
  * Starts a local docker-compose based Fabric based on the current set of tools.
  * This will stop and remove any currently running local Fabric configuration.
  *
- * Invoked directly post 'npm install' so no requirement to call it directly.
- * Can be used though to refresh and loaded specific versions.
  *
  * @task {provision}
  */
@@ -67,6 +67,32 @@ gulp.task('provision', ()=>{
     return fn();
 } );
 
+
+/**
+ * Does the initial installation and start of the business network
+ *
+ * Invoked directly post 'npm install' so no requirement to call it directly.
+ * Can be used though to refresh and loaded specific versions.
+ *
+ * @task {provision}
+ */
+gulp.task('startnetwork',['provision'], ()=>{
+    let fn = run([startnetwork_sh]);
+    return fn();
+} );
+
+/**
+ * Calls a standard bootstrap script in the contracts directory
+ *
+ * Invoked directly post 'npm install' so no requirement to call it directly.
+ * Can be used though to refresh and loaded specific versions.
+ *
+ * @task {provision}
+ */
+gulp.task('bootstrap', ()=>{
+    let fn = run([bootstrap_sh]);
+    return fn();
+} );
 
 /**
  * Outputs the current envionment variables specifically used for Composer/Fabric

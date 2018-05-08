@@ -1,0 +1,20 @@
+export COMPOSER_PROVIDERS='{
+	"github": {
+		"provider": "github",
+		"module": "passport-github",
+		"clientID": "ENTER CLIENT ID HERE",
+		"clientSecret": "ENTER CLIENT SECRET HERE",
+		"authPath": "/auth/github",
+		"callbackURL": "/auth/github/callback",
+		"successRedirect": "/",
+		"failureRedirect": "/"
+	}
+}'
+
+export COMPOSER_DATASOURCES='{
+	"db": {
+		"name": "db",
+		"connector": "loopback-connector-mongodb",
+		"url": "ENTER URL HERE"
+	}
+}'
