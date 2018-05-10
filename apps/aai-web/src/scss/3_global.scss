@@ -20,7 +20,7 @@
 }
 
 #contentPanel {
-	min-height:500px;
+	min-height:200px;
 	position: relative;
 	margin:30px 50px auto;
 }
@@ -155,9 +155,9 @@
 }
 
 .hint{
-	font-size:12px;
-	font-weight:bold;
-	color:$acc_color2;
+	font-size:15px;
+
+	color:$main_color;
 }
 #viewBCWrap{
 	color:$main_color;
@@ -313,11 +313,12 @@
 	position: absolute;
 	right: 7px;
 	top: 55px;
-	text-align: center;
+	text-align: left;
+	line-height: 30px
 }
 #loginButton{
 	display: block;
-	margin:auto;
+    font-size:15px;
 }
 
 

@@ -26,9 +26,13 @@ cd commerical-paper-starter-kit
 npm install
 ```
 
-3. Start up the servers that are required, and create 'starter' data
+The `npm install` will start up a local Hyperledger Fabric environment for you. In addition it will deploy the business network (built with Hyperledger Composer) to Fabric.
+
+
+
+3. It is then *strongly* recommended to put in some sample data and companies to get going. 
 ```
-npm run localfabric && npm run bootstrap
+npx gulp bootstrap
 ```
 
 4. Allmost - done; a locally running Hyperledger Fabric, deployed with a business network. Data for 2 brokers and an commercial company created. 
@@ -69,9 +73,13 @@ Command succeeded
 
 ```
 
+If you don't see the above, and there weren't any errors being reported it is most likey that the `NODE_CONFIG` envronment variable hasn't been set.. run `gulp env` to get a summary of what it is set to currently. 
+
 # Paper trading
 
-As this is a cli application you will need to use the console to trade in commerical paper. Firstly change to the directory that has the applications
+There is a cli application you will need to use the console to trade in commerical paper. In additional there are two web-based UIs for trading. One is specific to the scenario i.e. trading commercial paper. The second, is an example of how the Hyperleder Composer generator (that uses the Yeoman framework) can be used to create a 'starter' Angular-2 application. 
+
+Firstly change to the directory that has the applications - ensure that you have the `NODE_CONFIG` set as above!
 
 ```
 cd apps/cp-cli
@@ -80,7 +88,7 @@ cd apps/cp-cli
 Firstly we'll look at the information on Aardvark Investing and Ampretia Industries.
 
 ```
-$ CP_COMPANY=AAI@local node company                                                                                                                                 master  ✭ ✱
+$ CP_COMPANY=AAI@local node company                                                                                                                          
 info: [ResourceLoading-App] > Connecting business network connection
 info: [ResourceLoading-App] > AAI@local
 
@@ -214,5 +222,12 @@ So Aardvark Investing have purchased this paper - that we can now see if they li
 
 
 
-... to be continued
+## Web Application
+Change to the directory `apps/aai-web` and enter
+
+```
+npm start
+```
+
+This will start up the web application - open a browser and navigate to `localhost:3000`
 

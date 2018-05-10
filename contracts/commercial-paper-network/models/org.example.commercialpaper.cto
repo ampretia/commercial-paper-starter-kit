@@ -60,8 +60,8 @@ participant Company identified by symbol {
   o String      symbol
   o String      name
   o DID         publicdid
-  --> Account[] accountsManaged
-  --> PaperOwnership[]  issuedNotTraded
+  --> Account[] paperTradingAccounts
+  --> Account   issuedPaperAccount
 }
 
 /**
@@ -85,8 +85,8 @@ asset Account identified by ID {
 asset PaperOwnership identified by ID {
   o String ID					 
   --> CommercialPaper paper		
-  --> Company owner				
-  o Integer quantity			 	// should be deprecated
+  --> Company owner	
+  --> Account owningAccount		
 }
 
 /**
@@ -94,9 +94,7 @@ asset PaperOwnership identified by ID {
  */
 asset PaperListing identified by ID {
   o String ID
-  --> CommercialPaper  paper
-  --> Company          currentHolder
-  o Integer            quantityForSale
+  --> PaperOwnership   paperOwnership
   o Double             discount   range=[0.0,]
 }
 
@@ -158,18 +156,17 @@ transaction RedeemPaper {
 transaction PurchasePaper {
   --> Market market
 	--> PaperListing listing       
-  o Integer        qty
   --> Account account
 }
 
 /**
  * Issues paper 
  * This wil be sent in by a trader and therefore the issuing company is inferred
+ * This permits multiple commercial papers of the same value to be created at once
  */
 transaction CreatePaper {
 	o String    CUSIP         
   o String    ticker
-	o Integer   qty      range=[0,]
   o Integer   maturity range=[0,]
   o Currency  workingCurrency default="USD"
   o Double    par      range=[0.0,]
@@ -181,7 +178,6 @@ transaction CreatePaper {
  */
 transaction ListOnMarket {
   --> Market market
-  o Integer qty       // deprecated
   o Double  discount range=[0.0,]
-  --> CommercialPaper[] papersToList
+  --> PaperOwnership[] papersToList
 }

@@ -25,6 +25,7 @@ const chalk = require('chalk');
 const localScriptDir = path.join(__dirname,'.localtoolchain');
 const cyclelocalfabric_sh = path.resolve(localScriptDir,'cycle-local-fabric.sh');
 const startnetwork_sh = path.resolve(localScriptDir,'start-network.sh');
+const upgradenetwork_sh = path.resolve(localScriptDir,'upgrade-network.sh');
 const bootstrap_sh = path.resolve('.','contracts','commercial-paper-network','bootstrap.sh');
 
 gulp.task('default', function () {
@@ -82,26 +83,42 @@ gulp.task('provision', ()=>{
  * Does the initial installation and start of the business network
  *
  * Invoked directly post 'npm install' so no requirement to call it directly.
- * Can be used though to refresh and loaded specific versions.
+ * Can be used though to restart everything
  *
- * @task {provision}
+ * Call `gulp bootstrap` after this to create initial resources
+ * @task {startnetwork}
  */
 gulp.task('startnetwork',['provision'], ()=>{
     let fn = run([startnetwork_sh]);
-    return fn();
+    return fn().then(()=>{
+    	console.log('Next thing to run is gulp bootstrap');
+    });
+} );
+
+/**
+ * Rebuilds and upgrades the deployed network
+ *
+ * @task {upgradenetwork}
+ */
+gulp.task('upgradenetwork', ()=>{
+    let fn = run([upgradenetwork_sh]);
+    return fn().then(()=>{
+    	console.log('done...');
+    });
 } );
 
 /**
  * Calls a standard bootstrap script in the contracts directory
  *
- * Invoked directly post 'npm install' so no requirement to call it directly.
- * Can be used though to refresh and loaded specific versions.
- *
- * @task {provision}
+ * @task {bootstrap}
  */
 gulp.task('bootstrap', ()=>{
-    let fn = run([bootstrap_sh]);
-    return fn();
+    if(!process.env.NODE_CONFIG){
+        console.log('NODE_CONFIG appears to not be set - it should be to use the local cardstore');
+    }else {
+        let fn = run([bootstrap_sh]);
+        return fn();
+    }
 } );
 
 /**
@@ -123,7 +140,7 @@ gulp.task('env', ()=>{
     if (nodecfg.composer.wallet){
         jsome(nodecfg.composer.wallet);
     } else {
-        console.log('None specified, will use default of <coming soon>');
+        console.log('None specified, will use default.');
     }
 
 
@@ -131,7 +148,7 @@ gulp.task('env', ()=>{
     if (nodecfg.composer.log) {
         jsome(nodecfg.composer.log);
     } else {
-        console.log('None specified, will use default of <coming soon>');
+        console.log('None specified, will use default.');
     }
     console.log('\n');
 });

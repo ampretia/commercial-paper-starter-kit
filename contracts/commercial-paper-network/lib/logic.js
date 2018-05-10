@@ -18,7 +18,14 @@
 const ns = 'org.example.commercialpaper';
 
 /**
- * Sample transaction processor function.
+ * This purchases a paper from a market
+ *
+ * transaction PurchasePaper {
+ *  --> Market market
+ *	--> PaperListing listing
+ *  --> Account account
+ * }
+ *
  * @param {org.example.commercialpaper.PurchasePaper} tx The sample transaction instance.
  * @transaction
  */
@@ -26,46 +33,59 @@ async function purchasePaper(tx) {  // eslint-disable-line no-unused-vars
 
     let market = tx.market;
     let companyBuying = getCurrentParticipant();
-    // validation
-    // tbd
-    // if (tx.qty > tx.listing.quantityForSale){
-    //     throw new Error('Insufficient paper volume for this trade');
-    // }
 
-    // deprecate the holdings on that market by the right amount
+
     const listingRegistry = await getAssetRegistry(`${ns}.PaperListing`);
     const marketRegistry = await getAssetRegistry(`${ns}.Market`);
-    let listing = tx.listing;
-    // listing.quantityForSale -= tx.qty;
-    await listingRegistry.remove(listing.getIdentifier());
+    const ownershipRegistry = await getAssetRegistry(`${ns}.PaperOwnership`);
+    const accountRegistry = await getAssetRegistry(`${ns}.Account`);
+
+    let listingId = tx.listing.getIdentifier();
+    let currentHolder = tx.listing.paperOwnership.owner;
+    let currentAccount = tx.listing.paperOwnership.owningAccount;
+    let paper = tx.listing.paperOwnership.paper;
+
+    // this is being purchased so we need to remove the PaperListing asset
+    await listingRegistry.remove(listingId);
     market.papersForSale = market.papersForSale.filter((e)=>{
-        return e.getIdentifier() !== listing.getIdentifier();
+        return e.getIdentifier() !== listingId;
     });
     await marketRegistry.update(market);
 
-    console.log('Removed the listing');
-    // change the paper to be held by the new owner
-    let ownership = getFactory().newResource(ns,'PaperOwnership',companyBuying.symbol+'#'+listing.paper.CUSIP);
-    const ownershipRegistry = await getAssetRegistry(`${ns}.PaperOwnership`);
-    ownership.paper = listing.paper;
+    // Create a new ownership asset and add
+    let ownership = getFactory().newResource(ns,'PaperOwnership',companyBuying.symbol+'#'+paper.CUSIP);
+    ownership.paper = paper;
     ownership.owner = companyBuying;
-    ownership.quantity = 1;//tx.qty;
-
-    console.log('adding the ownerhsip');
-    // add it to their listings.
     await ownershipRegistry.add(ownership);
 
-    console.log('adding to the account');
-    // now need to get the account that this was purchased via and update that
-    tx.account.assets.push(getFactory().newRelationship(ns,'PaperOwnership',companyBuying.symbol+'#'+listing.paper.CUSIP));
+    // remove the ownership asset that previously existed
+    await ownershipRegistry.remove(tx.listing.paperOwnership.getIdentifier());
 
-    let accountRegistry = await getAssetRegistry(`${ns}.Account`);
+    // make sure the previously owning company doesn't have it any more in their accounts
+    tx.listing.paperOwnership.owningAcount.assets = currentAccount.assets.filter((e)=> {
+        return e.getIdentifier() !== tx.listing.paperOwnership.getIdentifier();
+    });
+
+    // now need to get the account that this was purchased via and update that
+    tx.account.assets.push(getFactory().newRelationship(ns,'PaperOwnership',companyBuying.symbol+'#'+paper.CUSIP));
+
+    // money transfer
+    let discountedValue = paper.par * (100-tx.listing.discount) / 100;
+    // remove that from account 'buying'
+    // add that to the account 'selling'
+    currentAccount.cashBalance += discountedValue;
+    tx.account.cashBalance -= discountedValue;
+
+
+    await accountRegistry.update(currentAccount);
     await accountRegistry.update(tx.account);
 }
 
 /**
- * Sample transaction processor function.
- * @param {org.example.commercialpaper.ListOnMarket} tx The sample transaction instance.
+ * This lists an already created Commercial Paper instance on a market. This could be
+ * either one just created by a company to raise funds, or could be being traded
+ *
+ * @param {org.example.commercialpaper.ListOnMarket} tx transaction instance
  * @transaction
  */
 async function listOnMarket(tx) {  // eslint-disable-line no-unused-vars
@@ -81,9 +101,7 @@ async function listOnMarket(tx) {  // eslint-disable-line no-unused-vars
     for (const paper of tx.papersToList) {
         let id = market.getIdentifier()+'='+paper.CUSIP;
         let listing = getFactory().newResource(ns,'PaperListing',id);
-        listing.paper = paper;
-        listing.currentHolder = company;
-        listing.quantityForSale = 1;
+        listing.paperOwnership = paper;
         listing.discount = tx.discount;
 
         await listingRegistry.add(listing);
@@ -92,21 +110,8 @@ async function listOnMarket(tx) {  // eslint-disable-line no-unused-vars
         market.papersForSale.push(listing);
         await marketRegistry.update(market);
 
-        // todo - remove from the list in the companies array
+        // to do - issue an event here
 
-        try {
-
-            await request.post({ uri:  'https://api.pushover.net/1/messages.json',
-                form: {
-                    token:'ayq7zvsxc641sfna65njkik1x9y25b',
-                    user:'u71fr7r5xvopowybac6pwt9ta39p2r',
-                    message:'New Papers listed from '+company.name
-                }
-            });
-
-        } catch (err){
-            console.log(err);
-        }
     }
 
 
@@ -114,6 +119,10 @@ async function listOnMarket(tx) {  // eslint-disable-line no-unused-vars
 }
 
 /**
+ * This creates a new Commerical Paper instance, and creates an ownership record for the company
+ * that issued it. This is held in a specific account that the issuing company can use to tracks it's liabilities
+ *
+ *
  * @param {org.example.commercialpaper.CreatePaper} tx create new paper(s)
  * @transaction
  */
@@ -125,8 +134,10 @@ async function createPaper(tx) {  // eslint-disable-line no-unused-vars
     const companyRegistry = await getParticipantRegistry(`${ns}.Company`);
     let company =  getCurrentParticipant();
     const ownershipRegistry = await getAssetRegistry(`${ns}.PaperOwnership`);
+    const accountRegistry = await getAssetRegistry(`${ns}.Account`);
+
     for (let i=0; i<tx.numberToCreate; i++){
-    // draft #1 create the paper and add ito the registry
+        // create the paper and add ito the registry
         let paperId= `${tx.CUSIP}#${i}`;
         let paper = getFactory().newResource(ns,'CommercialPaper',paperId);
         paper.ticker = tx.ticker;
@@ -141,21 +152,25 @@ async function createPaper(tx) {  // eslint-disable-line no-unused-vars
         // Update the asset in the asset registry.
         await assetRegistry.add(paper);
 
-        console.log('Added the new paper to the registry '+paperId);
-
         // add it to the ownership of the company that issues it
         // change the paper to be held by the new owner
         let ownership = getFactory().newResource(ns,'PaperOwnership',company.symbol+'#'+paperId);
         ownership.paper = paper;
         ownership.owner = company;
-        ownership.quantity = 0;
+        ownership.owningAccount = getFactory().newRelationship(ns,'Account',company.issuedPaperAccount.getIdentifier());
 
-
+      	console.log('a');
         // add it to their listings.
         await ownershipRegistry.add(ownership);
+        console.log('b');
         let ownershipRelation = getFactory().newRelationship(ns,'PaperOwnership',company.symbol+'#'+paperId);
-        company.issuedNotTraded.push(ownershipRelation);
-        await companyRegistry.update(company);
+        console.log('c');
+        let c = await companyRegistry.get(company.getIdentifier());
+        let ac = await accountRegistry.get(c.issuedPaperAccount.getIdentifier());
+        console.log(ac);
+        ac.assets.push(ownershipRelation);
+        await companyRegistry.update(c);
+        await accountRegistry.update(ac);
     }
 
 }

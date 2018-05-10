@@ -21,11 +21,11 @@
                     "method": "sov",
                     "identifier": "ai3ngBhByaxg35"
                   },
-                  "accountsManaged":[
+                  "paperTradingAccounts":[
                     "resource:org.example.commercialpaper.Account#AAI-USD-001",
                     "resource:org.example.commercialpaper.Account#AAI-GBP-001"
                   ],
-                  "issuedNotTraded":[]
+                  "issuedPaperAccount": "resource:org.example.commercialpaper.Account#AAI-ISSUED-USD"
             },
             {
                 "$class": "org.example.commercialpaper.Company",
@@ -37,11 +37,11 @@
                     "method": "sov",
                     "identifier": "k47890623hM0hvfd"
                   },
-                  "accountsManaged":[
+                  "paperTradingAccounts":[
                     "resource:org.example.commercialpaper.Account#BAH-USD-001",
                     "resource:org.example.commercialpaper.Account#BAH-GBP-001"
                   ],
-                  "issuedNotTraded":[]
+                  "issuedPaperAccount": "resource:org.example.commercialpaper.Account#BAH-ISSUED-USD"
             },
             {
                 "$class": "org.example.commercialpaper.Company",
@@ -53,9 +53,9 @@
                     "method": "sov",
                     "identifier": "7nbGDFklbFFl8lkhx"
                   },
-                  "accountsManaged":[
+                  "paperTradingAccounts":[
                   ],
-                  "issuedNotTraded":[]
+                  "issuedPaperAccount": "resource:org.example.commercialpaper.Account#AMI-ISSUED-USD"
             }
 
         ],
@@ -66,6 +66,15 @@
                 "name": "USD-001",
                 "summary": "US Trading account 1",
                 "cashBalance": "1000000",
+                "assets":[]
+                
+            },
+            {
+                "$class": "org.example.commercialpaper.Account",
+                "ID": "AAI-ISSUED-USD",
+                "name": "USD-001",
+                "summary": "US Issuing Account",
+                "cashBalance": "0",
                 "assets":[]
                 
             },
@@ -94,8 +103,23 @@
                 "workingCurrency" :"STERLING",
                 "cashBalance": "1000000",
                 "assets":[]
+            },
+            {
+                "$class": "org.example.commercialpaper.Account",
+                "ID": "BAH-ISSUED-USD",
+                "name": "USD-001",
+                "summary": "US Trading account 1",
+                "cashBalance": "0",
+                "assets":[]
+            },
+            {
+                "$class": "org.example.commercialpaper.Account",
+                "ID": "AMI-ISSUED-USD",
+                "name": "USD-001-ISSUED",
+                "summary": "US Trading account 1",
+                "cashBalance": "0",
+                "assets":[]
             }
-
         ],        
         "org.example.commercialpaper.Trader": [
             {

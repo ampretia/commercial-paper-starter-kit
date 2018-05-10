@@ -1,10 +1,10 @@
 {
   "name": "commercial-paper-network",
-  "version": "0.0.32",
+  "version": "0.0.39",
   "description": "Business Network for Commercial Paper Trading",
   "scripts": {
-    "prepublish": "mkdirp ./dist && composer archive create --sourceType dir --sourceName . -a ./dist/commercial-paper-network.bna",
-    "docs":"composer generator docs --archive ./dist/commercial-paper-network.bna --outdir ../../docs",
+    "dist": "mkdirp ./dist && composer archive create --sourceType dir --sourceName . -a ./dist/commercial-paper-network.bna",
+    "docs": "composer generator docs --archive ./dist/commercial-paper-network.bna --outdir ../../docs",
     "pretest": "npm run lint",
     "lint": "eslint .",
     "test": "nyc mocha -t 0 test/*.js && cucumber-js"
@@ -22,6 +22,6 @@
     "mocha": "latest"
   },
   "dependencies": {
-    "composer-cli": "^0.19.4"
+    "composer-cli": "^0.19.5"
   }
 }
