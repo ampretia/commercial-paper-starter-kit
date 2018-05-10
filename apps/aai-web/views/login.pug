@@ -1,0 +1,47 @@
+extends template/layout
+	
+	
+//- --------------- Header -------------- //
+block custom_header
+	script(src='/js/part2.js')
+	script(src='/js/blockchain.js')
+	script(type='text/javascript').
+		$(document).ready(function(){
+			
+		});
+		
+		
+//- --------------- Navigation Bar  -------------- //
+block navpanel
+	include template/nav_part2
+	
+	
+//- --------------- Main Stuff  -------------- //
+block content
+	#contentPanel
+		#loginContainer
+			h1 Login
+			hr
+
+			form(method="POST" action="#" style="text-align: center;")
+				p.hint
+					| !{bag.session.error_msg}
+					br
+					br
+				p
+					.hint Company ID
+					input(type="radio" name="username" hidden)
+					input(type="text" placeholder="company user id" name="username" required)
+				p
+					.hint Password
+					input(type="password" name="password" required)
+				button(type="submit")#loginButton Login
+		br
+		br
+		br
+		#contentPanel
+			h1 Welcome
+				p This is a Commercial Paper trading UI for Brokers, to buy, sell, and issue commercial paper The two brokers in this scenarion are "Aardvark Investing" and "Badger and Honey".  
+				p Login with either yourname@AAI to be a Aardvark trader or youname@BAH for Badger and Honey
+				p Password of you choice - it is not stored. 
+

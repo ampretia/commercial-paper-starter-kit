@@ -1,27 +1,38 @@
-
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 'use strict';
 
 // grab our gulp packages
-let gulp  = require('gulp');
-let usage = require('gulp-help-doc');
-let run = require('gulp-run-command').default;
+const gulp  = require('gulp');
+const usage = require('gulp-help-doc');
+const run = require('gulp-run-command').default;
 const path= require('path');
+const jsome = require('jsome');
+const chalk = require('chalk');
+
 const localScriptDir = path.join(__dirname,'.localtoolchain');
 const cyclelocalfabric_sh = path.resolve(localScriptDir,'cycle-local-fabric.sh');
 const startnetwork_sh = path.resolve(localScriptDir,'start-network.sh');
 const bootstrap_sh = path.resolve('.','contracts','commercial-paper-network','bootstrap.sh');
-
-const jsome = require('jsome');
-
-const chalk = require('chalk');
-
 
 gulp.task('default', function () {
 
 });
 
 const log = (str)=>{
+    // eslint-disable-next-line no-console
     console.log(str);
 };
 
@@ -58,7 +69,6 @@ gulp.task('default', ['help']);
 /**
  * Starts a local docker-compose based Fabric based on the current set of tools.
  * This will stop and remove any currently running local Fabric configuration.
- *
  *
  * @task {provision}
  */

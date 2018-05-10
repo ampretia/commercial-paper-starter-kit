@@ -1,36 +1,3 @@
-type Owner struct {
-	Company  string    `json:"company"`
-	Quantity int      `json:"quantity"`
-}
-
-type CP struct {
-	CUSIP     string  `json:"cusip"`
-	Ticker    string  `json:"ticker"`
-	Par       float64 `json:"par"`
-	Qty       int     `json:"qty"`
-	Discount  float64 `json:"discount"`
-	Maturity  int     `json:"maturity"`
-	Owners    []Owner `json:"owner"`
-	Issuer    string  `json:"issuer"`
-	IssueDate string  `json:"issueDate"`
-}
-
-type Account struct {
-	ID          string  `json:"id"`
-	Prefix      string  `json:"prefix"`
-	CashBalance float64 `json:"cashBalance"`
-	AssetsIds   []string `json:"assetIds"`
-}
-
-type Transaction struct {
-	CUSIP       string   `json:"cusip"`
-	FromCompany string   `json:"fromCompany"`
-	ToCompany   string   `json:"toCompany"`
-	Quantity    int      `json:"quantity"`
-	Discount    float64  `json:"discount"`
-}
-
-CURRENCY
 
 
 ## Txs

@@ -1,7 +1,15 @@
 # How to trade in Commercial Paper?
-> Just to say that is a simulation.
+> Just to say that is a simulation, and consider this a 'tech preview'
 
-Currently this is in *beta* : and is command line based for demoing locally.
+# Background
+There are 3 parties in this scenario, two brokers, and one commercial firm. These firms will have multiple staff working for them, but in terms of the blockchain, there are only 3 participants who have indentities. These identies are used when issuing transactions to update the blockchain ledger. 
+
+In Composer terms, this means we have modelled a participant of company, and issued it an identity (in the form of a Composer Network Card). 
+an individual trader working for a broker for example has a participant but would not be issued a composer network card. In the companies own authentication system the would be granted permission to use this card. (as an anology, only some members of a small firm would be allowed use of the company credit card)
+
+- Aardvark Investing, and Badge & Honey are the two brokers, referred to as AAI and BAH respectively
+- Ampretia Industries is the commerical firm who primarily will be issuing the commerical paper to raise funds for short term obligations - eg to support a current large contract more short term staff have been required - more cash is needed for the payroll ahead of the contract being complete. 
+
 
 # Setup
 
