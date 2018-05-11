@@ -159,12 +159,11 @@ async function createPaper(tx) {  // eslint-disable-line no-unused-vars
         ownership.owner = company;
         ownership.owningAccount = getFactory().newRelationship(ns,'Account',company.issuedPaperAccount.getIdentifier());
 
-      	console.log('a');
         // add it to their listings.
         await ownershipRegistry.add(ownership);
-        console.log('b');
+
         let ownershipRelation = getFactory().newRelationship(ns,'PaperOwnership',company.symbol+'#'+paperId);
-        console.log('c');
+
         let c = await companyRegistry.get(company.getIdentifier());
         let ac = await accountRegistry.get(c.issuedPaperAccount.getIdentifier());
         console.log(ac);
@@ -172,5 +171,24 @@ async function createPaper(tx) {  // eslint-disable-line no-unused-vars
         await companyRegistry.update(c);
         await accountRegistry.update(ac);
     }
+}
+
+/**
+ *
+ * Assign the supplied DID to the participant
+ *
+ * @param {org.example.commercialpaper.AssignDid} tx assign DID tx
+ * @transaction
+ */
+async function assignDid(tx) {
+
+    let assignee = tx.targetCompany;
+
+    const companyRegistry = await getParticipantRegistry(`${ns}.Company`);
+    assignee.publicdid = tx.publicdid;
+
+    await companyRegistry.update(assignee);
 
 }
+
+

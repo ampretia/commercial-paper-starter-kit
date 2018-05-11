@@ -181,3 +181,11 @@ transaction ListOnMarket {
   o Double  discount range=[0.0,]
   --> PaperOwnership[] papersToList
 }
+
+/**
+ * Assign the supplied DID to the participant
+ */
+transaction AssignDid {
+  --> Company  targetCompany
+  o DID publicdid
+}
