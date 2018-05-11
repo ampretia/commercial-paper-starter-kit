@@ -1,0 +1,15 @@
+<h1>
+  List of DIDs
+</h1>
+<table>
+  <tr>
+    <th>Scheme</th>
+    <th>Method</th>
+    <th>Identifier</th>
+  </tr>
+  <tr *ngFor="let did of splitDIDs()">
+    <td>{{ did.scheme }}</td>
+    <td>{{ did.method }}</td>
+    <td>{{ did.identifier }}</td>
+  </tr>
+</table>

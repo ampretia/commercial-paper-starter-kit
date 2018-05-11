@@ -1,0 +1,18 @@
+/* You can add global styles to this file, and also import other style files */
+h1 {
+    border-bottom: 1px solid #595859;
+}
+
+button {
+    background-color: #eaeaea;
+    padding: 10px;
+    margin-right: 25px;
+    color: #595859;
+    cursor: pointer;
+}
+
+button:disabled,
+button[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
