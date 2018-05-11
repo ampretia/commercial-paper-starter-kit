@@ -52,5 +52,4 @@ chaincode/pkg
 .vscode
 
 *.card
-.localtoolchain/*.sh
 _local
