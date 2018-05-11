@@ -113,9 +113,6 @@ async function listOnMarket(tx) {  // eslint-disable-line no-unused-vars
         // to do - issue an event here
 
     }
-
-
-
 }
 
 /**

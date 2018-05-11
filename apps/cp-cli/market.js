@@ -69,7 +69,7 @@ async function showMarket(userCardName){
             console.log(chalk`\n{bold Current listings in} {blue ${market.ID}}`);
             for (const paperListingRef of market.papersForSale) {
                 let paperListing = await paperListingRegistry.get(paperListingRef.getIdentifier());
-                let paper = await paperRegistry.get(paperListing.paper.getIdentifier());
+                let paper = await paperRegistry.get(paperListing.paperOwnership.getIdentifier());
                 let issuer = await companiesRegistry.get(paper.issuer.getIdentifier());
                 listingsTable.push([paperListing.ID, paperListing.discount,paper.ticker,paper.par,paper.maturity,issuer.name]);
 
