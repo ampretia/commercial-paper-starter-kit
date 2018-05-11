@@ -21,6 +21,8 @@ const run = require('gulp-run-command').default;
 const path= require('path');
 const jsome = require('jsome');
 const chalk = require('chalk');
+const rp = require('request-promise');
+
 
 const localScriptDir = path.join(__dirname,'.localtoolchain');
 const cyclelocalfabric_sh = path.resolve(localScriptDir,'cycle-local-fabric.sh');
@@ -28,9 +30,14 @@ const startnetwork_sh = path.resolve(localScriptDir,'start-network.sh');
 const upgradenetwork_sh = path.resolve(localScriptDir,'upgrade-network.sh');
 const bootstrap_sh = path.resolve('.','contracts','commercial-paper-network','bootstrap.sh');
 
-const startindy_sh = path.resolve('.','services','identity','startindy.sh');
-const stopindy_sh = path.resolve('.','services','identity','stopindy_sh');
+const startindy_sh = path.resolve('.','services','identity','startIndy.sh');
+const stopindy_sh = path.resolve('.','services','identity','stopIndy_sh');
 
+
+gulp.task('gendid',()=>{
+   let options= {method:'POST',uri:'http://localhost:8888/DID'}
+   return	rp(options)
+});
 
 gulp.task('default', function () {
 
