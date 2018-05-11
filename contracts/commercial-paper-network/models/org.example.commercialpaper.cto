@@ -147,7 +147,7 @@ asset Market identified by ID {
  * Redeems a paper when it matures
  */
 transaction RedeemPaper {
-  --> CommercialPaper maturedPaper
+  --> PaperOwnership maturedPaper
 }
 
 /**
@@ -189,3 +189,4 @@ transaction AssignDid {
   --> Company  targetCompany
   o DID publicdid
 }
+

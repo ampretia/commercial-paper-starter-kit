@@ -19,12 +19,12 @@
 const fs = require('fs');
 const path = require('path');
 const winston = require('winston');
-const Table = require('cli-table-redemption');
 const boxen = require('boxen');
 const chalk = require('chalk');
+const Table = require('cli-table-redemption');
 const inquirer = require('inquirer');
 const uuidv1 = require('uuid/v1');
-const AdminConnection = require('composer-admin').AdminConnection;
+
 const ns = 'org.example.commercialpaper';
 // Require the client API
 const BusinessNetworkConnection = require('composer-client').BusinessNetworkConnection;
@@ -49,32 +49,16 @@ async function getInput(){
 
 
     let questions = [
-
         {
-            name: 'marketId',
+            name: 'accountId',
             type: 'input',
-            message: 'Enter ID of the Market to issue this paper into'
+            message: 'Enter ID of the account this paper is held in'
         },
         {
-            name: 'ticker',
+            name: 'paperId',
             type: 'input',
-            message: 'Enter "ticker" name of the paper to issue'
-        },
-        {
-            name: 'maturity',
-            type: 'input',
-            message: 'Enter maturity time of this paper (in days)'
-        },
-        {
-            name: 'par',
-            type: 'input',
-            message: 'Enter par value of this paper '
-        },
-        {
-            name: 'numberToCreate',
-            type: 'input',
-            message: 'Enter number of copies of this paper to issue'
-        },
+            message: 'Enter "ID" name of the paper to redeem'
+        }
 
     ];
     let answers = await inquirer.prompt(questions);
@@ -89,48 +73,36 @@ async function getInput(){
 async function submitTx(userCardName){
     try {
 
-        // first find out who I am
-        const adminConnection = new AdminConnection();
-        await adminConnection.connect(userCardName);
-        let metaData = await adminConnection.ping();
-        let participantId = metaData.participant.substr(metaData.participant.indexOf('#')+1);
-        await adminConnection.disconnect();
-
         // let table = new Table();
         const businessNetworkConnection = new BusinessNetworkConnection();
         LOG.info('> Connecting business network connection',userCardName);
         businessNetworkDefinition = await businessNetworkConnection.connect(userCardName);
         serializer = businessNetworkDefinition.getSerializer();
 
-        console.log(boxen(chalk.blue.bold('Commerical Paper Trading - Paper Issuing'),{padding:1,margin:1}));
 
+        console.log(boxen(chalk.blue.bold('Commerical Paper Trading - Paper Redeem'),{padding:1,margin:1}));
         let answers = await getInput();
         let factory = businessNetworkDefinition.getFactory();
 
+        let accountRegistry = await businessNetworkConnection.getRegistry(`${ns}.Account`);
+        let paperOwnershipRegistry = await businessNetworkConnection.getRegistry(`${ns}.PaperOwnership`);
 
-        let createTx = factory.newTransaction(ns,'CreatePaper');
-        createTx.ticker = answers.ticker;
-        createTx.numberToCreate = parseInt(answers.numberToCreate);
-        createTx.maturity = parseInt(answers.maturity);
-        createTx.par = parseInt(answers.par);
+        let account = await accountRegistry.get(answers.accountId);
+        // console.log(account.assets);
+        let paperOwnership = account.assets.filter(async (e)=>{
 
-        createTx.CUSIP = uuidv1();
+            let ownerhsip = await paperOwnershipRegistry.get(e.getIdentifier());
+            return ownerhsip.paper.getIdentifier() === answers.paperId;
+        });
 
-        LOG.info('> Submitting transaction for new paper');
-        await businessNetworkConnection.submitTransaction(createTx);
+        console.log(paperOwnership);
+        let redeemTx = factory.newTransaction(ns,'RedeemPaper');
+        redeemTx.maturedPaper = paperOwnership[0];//factory.newRelationship(ns,'PaperOwnership',paperOwnership.getIdentifier());
 
-        let listTx = factory.newTransaction(ns,'ListOnMarket');
-        listTx.discount = 3.5;
-        listTx.market = factory.newRelationship(ns,'Market',answers.marketId);
-        listTx.papersToList = [];
-        // need to create the references for the papers created
-        for (let i=0; i<answers.numberToCreate;i++){
-            listTx.papersToList.push(factory.newRelationship(ns,'PaperOwnership',`${participantId}#${createTx.CUSIP}#${i}`));
-        }
 
-        LOG.info('> Listing on market');
-        await businessNetworkConnection.submitTransaction(listTx);
-        LOG.info(chalk`> Run   {bold CP_COMPANY=${userCardName} node market} to see the listed paper`);
+        console.log('Submitting transaction for paper redemption');
+        await businessNetworkConnection.submitTransaction(redeemTx);
+
         await businessNetworkConnection.disconnect();
     } catch (error) {
         LOG.error(error);

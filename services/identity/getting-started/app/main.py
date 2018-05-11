@@ -9,8 +9,6 @@ class HelloWorldResource:
 
 class DIDS:
 
-
-
     def __init__(self):
         self.dids = []
         file = open("/tmp/data.csv") 
@@ -26,7 +24,6 @@ class DIDS:
     def on_post(self,request,response):
         self.count+=1
         response.media = self.dids[self.count-1]
-
 
 
 app = falcon.API()

@@ -79,7 +79,7 @@ async function showCompany(userCardName){
             table.push(data);
         }
 
-        console.log(chalk`\n{bold Papers issued but not yet traded:}`);
+        console.log(chalk`\n[{bold ${issuedPaperAccount.ID}}] {green ${issuedPaperAccount.summary}}, {green ${issuedPaperAccount.workingCurrency}}, {white ${issuedPaperAccount.cashBalance}}`);
         console.log(table.length>0?table.toString():'<none>');
 
         console.log(chalk`\n{bold Trading Accounts:}`);

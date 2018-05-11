@@ -10,7 +10,7 @@ cc_summaries/*.json
 **/keyValStore
 
 # CSS is built at runtime from SCSS
-**/public/css/*.css
+#**/public/css/*.css
 
 
 # IntelliJ

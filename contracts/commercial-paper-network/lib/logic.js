@@ -56,18 +56,22 @@ async function purchasePaper(tx) {  // eslint-disable-line no-unused-vars
     let ownership = getFactory().newResource(ns,'PaperOwnership',companyBuying.symbol+'#'+paper.CUSIP);
     ownership.paper = paper;
     ownership.owner = companyBuying;
+    ownership.owningAccount = tx.account;
     await ownershipRegistry.add(ownership);
 
     // remove the ownership asset that previously existed
     await ownershipRegistry.remove(tx.listing.paperOwnership.getIdentifier());
 
     // make sure the previously owning company doesn't have it any more in their accounts
-    tx.listing.paperOwnership.owningAcount.assets = currentAccount.assets.filter((e)=> {
+    currentAccount.assets = currentAccount.assets.filter((e)=> {
+        console.log(e);
         return e.getIdentifier() !== tx.listing.paperOwnership.getIdentifier();
     });
-
+    console.log('2');
+    console.log(tx.account);
     // now need to get the account that this was purchased via and update that
-    tx.account.assets.push(getFactory().newRelationship(ns,'PaperOwnership',companyBuying.symbol+'#'+paper.CUSIP));
+    tx.account.assets.push(
+        getFactory().newRelationship(ns,'PaperOwnership',companyBuying.symbol+'#'+paper.CUSIP));
 
     // money transfer
     let discountedValue = paper.par * (100-tx.listing.discount) / 100;
@@ -98,10 +102,11 @@ async function listOnMarket(tx) {  // eslint-disable-line no-unused-vars
     const listingRegistry = await getAssetRegistry(`${ns}.PaperListing`);
 
     //
-    for (const paper of tx.papersToList) {
-        let id = market.getIdentifier()+'='+paper.CUSIP;
+    for (const paperListing of tx.papersToList) {
+        let paper = paperListing.paper;
+        let id = market.getIdentifier()+'='+paper.getIdentifier();
         let listing = getFactory().newResource(ns,'PaperListing',id);
-        listing.paperOwnership = paper;
+        listing.paperOwnership = paperListing;
         listing.discount = tx.discount;
 
         await listingRegistry.add(listing);
@@ -168,6 +173,38 @@ async function createPaper(tx) {  // eslint-disable-line no-unused-vars
         await companyRegistry.update(c);
         await accountRegistry.update(ac);
     }
+}
+
+
+
+/**
+ * Paper has matured and now it can be redeemed
+ * @param {org.example.commercialpaper.RedeemPaper} tx transaction
+ * @transaction
+ */
+async function redeem(tx){
+    let currentOwnership = tx.maturedPaper;
+
+    let parValue = currentOwnership.paper.par;
+    let issuer = currentOwnership.paper.issuer;
+
+    let accountOfCurrentHolder = currentOwnership.owningAccount;
+    accountOfCurrentHolder.cashBalance += parValue;
+
+    let accountOfIssuer = issuer.issuedPaperAccount;
+    accountOfIssuer.cashBalance -= parValue;
+
+    const accountRegistry = await getAssetRegistry(`${ns}.Account`);
+
+
+    // remove the paper from the holders accounts
+    accountOfCurrentHolder.assets = accountOfCurrentHolder.assets.filter((e)=> {
+        console.log(e);
+        return e.getIdentifier() !== currentOwnership.getIdentifier();
+    });
+
+    await accountRegistry.update(accountOfCurrentHolder);
+    await accountRegistry.update(accountOfIssuer);
 }
 
 /**

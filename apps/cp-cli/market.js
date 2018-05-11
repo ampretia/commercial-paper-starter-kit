@@ -59,6 +59,7 @@ async function showMarket(userCardName){
 
         let companiesRegistry = await businessNetworkConnection.getRegistry(`${ns}.Company`);
 
+        let paperOwnershipRegistry = await businessNetworkConnection.getRegistry(`${ns}.PaperOwnership`);
         let paperListingRegistry = await businessNetworkConnection.getRegistry(`${ns}.PaperListing`);
         let paperRegistry = await businessNetworkConnection.getRegistry(`${ns}.CommercialPaper`);
         let marketRegistry = await businessNetworkConnection.getRegistry(`${ns}.Market`);
@@ -68,8 +69,12 @@ async function showMarket(userCardName){
             let listingsTable = new Table({head:['ID','Discount','Ticker','Par','Maturity','Issuer']});
             console.log(chalk`\n{bold Current listings in} {blue ${market.ID}}`);
             for (const paperListingRef of market.papersForSale) {
+
                 let paperListing = await paperListingRegistry.get(paperListingRef.getIdentifier());
-                let paper = await paperRegistry.get(paperListing.paperOwnership.getIdentifier());
+
+                let paperOwnership = await paperOwnershipRegistry.get(paperListing.paperOwnership.getIdentifier());
+
+                let paper = await paperRegistry.get(paperOwnership.paper.getIdentifier());
                 let issuer = await companiesRegistry.get(paper.issuer.getIdentifier());
                 listingsTable.push([paperListing.ID, paperListing.discount,paper.ticker,paper.par,paper.maturity,issuer.name]);
 
