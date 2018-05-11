@@ -28,6 +28,10 @@ const startnetwork_sh = path.resolve(localScriptDir,'start-network.sh');
 const upgradenetwork_sh = path.resolve(localScriptDir,'upgrade-network.sh');
 const bootstrap_sh = path.resolve('.','contracts','commercial-paper-network','bootstrap.sh');
 
+const startindy_sh = path.resolve('.','services','identity','startindy.sh');
+const stopindy_sh = path.resolve('.','services','identity','stopindy_sh');
+
+
 gulp.task('default', function () {
 
 });
@@ -120,6 +124,32 @@ gulp.task('bootstrap', ()=>{
         return fn();
     }
 } );
+
+/**
+ * Starts the Indy Identity Network running locally
+ * and stands up a simple REST API for querying public DIDs
+ *
+ * @task {startindy}
+ */
+gulp.task('startindy', ()=>{
+    let fn = run([startindy_sh]);
+    return fn().then(()=>{
+    	console.log('done...');
+    });
+} );
+
+/**
+ * Stops the Indy Identity Network locally
+ *
+ * @task {stopindy}
+ */
+gulp.task('stopindy', ()=>{
+    let fn = run([stopindy_sh]);
+    return fn().then(()=>{
+    	console.log('done...');
+    });
+} );
+
 
 /**
  * Outputs the current envionment variables specifically used for Composer/Fabric

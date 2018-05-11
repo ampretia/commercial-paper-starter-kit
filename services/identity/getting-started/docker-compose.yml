@@ -27,7 +27,8 @@ services:
     build:
       context: .
       dockerfile: getting-started.dockerfile
-    command: ["gunicorn", "-b", "0.0.0.0:8888", "main:app"]
+    # command: ["gunicorn", "-b", "0.0.0.0:8888", "main:app"]
+    command: ["/home/indy/python/go.sh"]
     image: getting-started
     container_name: getting_started
     working_dir: /home/indy/app
