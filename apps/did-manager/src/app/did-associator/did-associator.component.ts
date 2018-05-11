@@ -22,7 +22,6 @@ export class DidAssociatorComponent implements OnInit {
     });
 
     this.http.get('/api/participants').subscribe((data) => {
-      console.log('DATA', data);
       this.participants = data;
     }, (err) => {
       console.error('ERROR GETTING ALL PARTICIPANTS', err);
@@ -34,7 +33,7 @@ export class DidAssociatorComponent implements OnInit {
     const participant = selectHolder.previousSibling.innerHTML;
     const did = selectHolder.getElementsByTagName('select')[0].value;
 
-    this.http.post('/api/participant', {
+    this.http.put('/api/participant', {
       participant: participant,
       did: did
     }, {observe: 'response'}).subscribe((resp) => {

@@ -2,34 +2,43 @@
 
 const express = require('express');
 const router = express.Router();
+const request = require('request');
 
 const BusinessNetworkConnection = require('composer-client').BusinessNetworkConnection;
 const businessNetworkConnection = new BusinessNetworkConnection();
 
 const namespace = 'org.example.commercialpaper';
-const participantType = 'Company'
+const participantType = 'Company';
+const cardName = 'admin@local';
+const didServer = 'http://localhost:8888/dids';
 
 router.get('/', (req, res) => {
     res.send('api working');
 });
 
 router.post('/did', (req, res) => {
-    // CREATE A DID AND SEND IT BACK
-    res.send({did: 'DID:SOV:' + makeid()});
+    request.post(didServer, {}, (err, resp, body) => {
+        if (err) {
+            res.status(500).send({message: 'Error creating DID'});
+        }
+        res.send({did: body});
+    });
 });
 
 router.get('/did/all', (req, res) => {
     // GET ALL DIDs FROM SERVER
-    res.setHeader('content-type', 'application/json');
-    res.send([
-        'DID:SOV:QRSTUVWXYZABCDEF',
-        'DID:SOV:ABCDEFGHIJKLMNOP',
-        'DID:SOV:GHIJKLMNOPQRSTUV'
-    ]);
+    request.post(didServer, {}, (err, resp, body) => {
+        if (err) {
+            res.status(500).send({message: 'Error getting DIDs'});
+        }
+        res.setHeader('content-type', 'application/json');
+        res.send(body);
+    });
 });
 
 router.get('/participants', async (req, res) => {
-    const businessNetworkDefinition = await businessNetworkConnection.connect('admin@local');
+    // GET ALL PARTICIPANTS
+    const businessNetworkDefinition = await businessNetworkConnection.connect(cardName);
     const participantRegistry = await businessNetworkConnection.getParticipantRegistry(namespace+'.'+participantType);
     const serializer = businessNetworkDefinition.getSerializer();
     let returnObj = [];
@@ -55,10 +64,11 @@ router.get('/participants', async (req, res) => {
     res.send(returnObj);
 });
 
-router.post('/participant', async (req, res) => {
+router.put('/participant', async (req, res) => {
+    // UPDATE PARTICIPANT TO HAVE A DID FIELD
     let didSplit = req.body.did.split(':');
 
-    const businessNetworkDefinition = await businessNetworkConnection.connect('admin@local');
+    const businessNetworkDefinition = await businessNetworkConnection.connect(cardName);
     let factory = businessNetworkDefinition.getFactory();
     let assignTx = factory.newTransaction(namespace,'AssignDid');
     assignTx.targetCompany = factory.newRelationship(namespace, participantType, req.body.participant.split('#')[1]);
@@ -72,16 +82,5 @@ router.post('/participant', async (req, res) => {
 
     res.send({message: 'Successfully bound participant to DID'});
 });
-
-function makeid() {
-    var text = "";
-    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  
-    for (var i = 0; i < 16; i++)
-      text += possible.charAt(Math.floor(Math.random() * possible.length));
-  
-    return text;
-  }
-  
 
 module.exports = router;

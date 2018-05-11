@@ -15,13 +15,16 @@
 <h2>
   Associate
 </h2>
+<div *ngIf="didsWithoutParticipants().length === 0" >No DIDs to associate</div>
 <div *ngIf="participantsWithoutDID().length === 0" >No participants to associate</div>
-<div *ngFor="let participant of participantsWithoutDID()" class="did-association">
-  <div class="participant">{{ participant.participant }}</div>
-  <div class="did">
-      <select>
-        <option *ngFor="let did of didsWithoutParticipants()" [value]="did">{{ did }}</option>
-      </select> 
+<div *ngIf="didsWithoutParticipants().length !== 0">
+  <div *ngFor="let participant of participantsWithoutDID()" class="did-association">
+    <div class="participant">{{ participant.participant }}</div>
+    <div class="did" >
+        <select>
+          <option *ngFor="let did of didsWithoutParticipants()" [value]="did">{{ did }}</option>
+        </select> 
+    </div>
+    <button (click)="submit($event)">Apply</button>
   </div>
-  <button (click)="submit($event)">Apply</button>
 </div>
