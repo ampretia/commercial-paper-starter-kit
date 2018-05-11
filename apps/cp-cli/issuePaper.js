@@ -103,7 +103,6 @@ async function submitTx(userCardName){
 
         let createTx = factory.newTransaction(ns,'CreatePaper');
         createTx.ticker = answers.ticker;
-        createTx.qty = parseInt(answers.numberToCreate);
         createTx.numberToCreate = parseInt(answers.numberToCreate);
         createTx.maturity = parseInt(answers.maturity);
         createTx.par = parseInt(answers.par);
@@ -114,13 +113,12 @@ async function submitTx(userCardName){
         await businessNetworkConnection.submitTransaction(createTx);
 
         let listTx = factory.newTransaction(ns,'ListOnMarket');
-        listTx.qty = parseInt(answers.numberToCreate);
         listTx.discount = 3.5;
         listTx.market = factory.newRelationship(ns,'Market',answers.marketId);
         listTx.papersToList = [];
         // need to create the references for the papers created
         for (let i=0; i<answers.numberToCreate;i++){
-            listTx.papersToList.push(factory.newRelationship(ns,'CommercialPaper',`${createTx.CUSIP}#${i}`));
+            listTx.papersToList.push(factory.newRelationship(ns,'PaperOwnership',`${createTx.CUSIP}#${i}`));
         }
 
         LOG.info('> Listing on market');

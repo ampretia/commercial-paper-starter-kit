@@ -93,7 +93,6 @@ async function submitTx(userCardName){
         let purchaseTx = factory.newTransaction(ns,'PurchasePaper');
         purchaseTx.market = factory.newRelationship(ns,'Market',answers.marketId);
         purchaseTx.listing = factory.newRelationship(ns,'PaperListing',answers.paperListingId);
-        purchaseTx.qty=1;
         purchaseTx.account = factory.newRelationship(ns,'Account',answers.accountId);
 
         console.log('Submitting transaction for purchase paper');

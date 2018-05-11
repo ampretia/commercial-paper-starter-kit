@@ -71,7 +71,8 @@ async function showCompany(userCardName){
         console.log(chalk`{bold Public DID} ${company.publicdid.scheme}:${company.publicdid.method}:${company.publicdid.identifier}`);
         let table = new Table();
 
-        for (const paperref of company.issuedNotTraded){
+        let issuedPaperAccount = await accountRegistry.get(company.issuedPaperAccount.getIdentifier());
+        for (const paperref of issuedPaperAccount.assets){
             let paperOwnership = await paperOwnershipRegistry.get(paperref.getIdentifier());
             let paper = await paperRegistry.get(paperOwnership.paper.getIdentifier());
             let data = [paper.CUSIP,paper.ticker,paper.currency,paper.par,paper.maturity,paper.issueData];
@@ -83,7 +84,7 @@ async function showCompany(userCardName){
 
         console.log(chalk`\n{bold Trading Accounts:}`);
 
-        for (const accountRef of company.accountsManaged){
+        for (const accountRef of company.paperTradingAccounts){
             let account = await accountRegistry.get(accountRef.getIdentifier());
             console.log(chalk`\n[{bold ${account.ID}}] {green ${account.summary}}, {green ${account.workingCurrency}}, {white ${account.cashBalance}}`);
 
