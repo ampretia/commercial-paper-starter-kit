@@ -1,6 +1,6 @@
 {
   "name": "commercial-paper-network",
-  "version": "0.0.44",
+  "version": "0.0.45",
   "description": "Business Network for Commercial Paper Trading",
   "scripts": {
     "dist": "mkdirp ./dist && composer archive create --sourceType dir --sourceName . -a ./dist/commercial-paper-network.bna",

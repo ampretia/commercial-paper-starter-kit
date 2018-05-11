@@ -28,6 +28,13 @@ npm install
 
 The `npm install` will start up a local Hyperledger Fabric environment for you. In addition it will deploy the business network (built with Hyperledger Composer) to Fabric.
 
+If you wish to re-run the Hyperledger Fabric installation, and deploy the network again . i.e. clean up but you don't want to reinstall all the npm modules issues
+
+```
+gulp startnetwork
+```
+
+> Tip:   just type `gulp` to get a help summary
 
 
 3. It is then *strongly* recommended to put in some sample data and companies to get going. 
