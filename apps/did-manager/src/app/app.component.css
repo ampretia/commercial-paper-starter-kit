@@ -1,0 +1,15 @@
+:host {
+    font-family: sans-serif;
+    color: #595859;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+}
+
+#content {
+    position: relative;
+    width: calc(100% - 50px);
+    left: 25px;
+    margin-bottom: 25px;
+}

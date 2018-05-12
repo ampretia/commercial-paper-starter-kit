@@ -1,0 +1,30 @@
+<h1>
+  Associate DID with Participants
+</h1>
+
+<h2>
+  Linked participants
+</h2>
+<div *ngIf="participantsWithDID().length === 0" >No participants have been linked</div>
+<div *ngFor="let participant of participantsWithDID()" class="did-association joined">
+  <div class="participant">{{ participant.participant }}</div>
+  <div class="join"></div>
+  <div class="did">{{ participant.did }}</div>
+</div>
+
+<h2>
+  Associate
+</h2>
+<div *ngIf="didsWithoutParticipants().length === 0" >No DIDs to associate</div>
+<div *ngIf="participantsWithoutDID().length === 0" >No participants to associate</div>
+<div *ngIf="didsWithoutParticipants().length !== 0">
+  <div *ngFor="let participant of participantsWithoutDID()" class="did-association">
+    <div class="participant">{{ participant.participant }}</div>
+    <div class="did" >
+        <select>
+          <option *ngFor="let did of didsWithoutParticipants()" [value]="did">{{ did }}</option>
+        </select> 
+    </div>
+    <button (click)="submit($event)">Apply</button>
+  </div>
+</div>
