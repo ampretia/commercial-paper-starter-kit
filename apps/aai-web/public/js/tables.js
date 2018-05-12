@@ -46,6 +46,35 @@ function buyButton(disabled, cusip, issuer) {
 }
 
 /**
+ * Generates a redeem button cell that users can click to redeem commercial paper.
+ * @param disabled True if the button should be disabled, false otherwise.
+ * @param cusip The cusip for the paper that this button is assigned to.
+ * @param issuer The issuer of the paper that this button is assigned to.
+ * @returns {Element} A table cell with a configured buy button.
+ */
+function redeemButton(disabled, cusip, issuer) {
+    let button = document.createElement('button');
+    button.setAttribute('type', 'button');
+    button.setAttribute('data_cusip', cusip);
+    button.setAttribute('data_issuer', issuer);
+    if(disabled) {button.disabled = true;}
+    button.classList.add('redeemPaper');
+    button.classList.add('altButton');
+
+    let span = document.createElement('span');
+    span.classList.add('fa');
+    span.classList.add('fa-exchange');
+    span.innerHTML = ' &nbsp;&nbsp;REDEEM';
+    button.appendChild(span);
+
+    // Wrap the buy button in a td like the other items in the row.
+    let td = document.createElement('td');
+    td.appendChild(button);
+
+    return td;
+}
+
+/**
  *
  * @param {Objwct} paper
  */
@@ -62,7 +91,7 @@ function paper_to_entries(paper) {
         discount: paper.discount,
         maturity: paper.maturity,
         issuer: paper.issuer,
-        owner: 'company' //paper.owner[owner].company
+        owner: paper.owner
     };
 
         // Save which paper this is associated with

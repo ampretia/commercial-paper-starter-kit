@@ -97,10 +97,12 @@ $(document).on('ready', function () {
 
     $('#tradeLink').click(function () {
         ws.send(JSON.stringify({type: 'get_open_trades', v: 2, user: user.username}));
+        ws.send(JSON.stringify({type: 'get_company', company: user.name, user: user.username}));
     });
 
     $('#holdingLink').click(function () {
         ws.send(JSON.stringify({type: 'get_own_papers', v: 2, user: user.username}));
+        ws.send(JSON.stringify({type: 'get_company', company: user.name, user: user.username}));
     });
 
     //login events
@@ -156,6 +158,13 @@ $(document).on('ready', function () {
         }
     });
 
+    $('#refresh').click( function() {
+        console.log('refresh');
+        ws.send(JSON.stringify({type: 'get_open_trades', v: 2, user: user.username}));
+        ws.send(JSON.stringify({type: 'get_own_papers', v: 2, user: user.username}));
+        ws.send(JSON.stringify({type: 'get_company', company: user.name, user: user.username}));
+    });
+
     //trade events
     $(document).on('click', '.buyPaper', function () {
         if (user.username) {
@@ -168,6 +177,33 @@ $(document).on('ready', function () {
             let msg = {
                 type: 'transfer_paper',
                 transfer: {
+                    //CUSIP: bag.papers[i].cusip,
+                    //fromCompany: bag.papers[i].issuer,
+                    CUSIP: cusip,
+                    fromCompany: issuer,
+                    toCompany: user.name,
+                    quantity: 1
+                },
+                user: user.username
+            };
+            console.log('sending', msg);
+            ws.send(JSON.stringify(msg));
+            $('#notificationPanel').animate({width: 'toggle'});
+        }
+    });
+
+    //trade events
+    $(document).on('click', '.redeemPaper', function () {
+        if (user.username) {
+            console.log('trading...');
+            let i = $(this).attr('trade_pos');
+            let cusip = $(this).attr('data_cusip');
+            let issuer = $(this).attr('data_issuer');
+
+            // TODO Map the trade_pos to the correct button
+            let msg = {
+                type: 'redeem_paper',
+                redeem: {
                     //CUSIP: bag.papers[i].cusip,
                     //fromCompany: bag.papers[i].issuer,
                     CUSIP: cusip,
@@ -287,9 +323,14 @@ function connect_to_server() {
                 new_block(temp);									//send to blockchain.js
             }
             else if (data.msg === 'company') {
+                console.log(JSON.stringify(data));
                 try{
                     let company = data.company;
                     $('#accountBalance').html(formatMoney(company.cashBalance));
+                    $('#holdingBalance').html(formatMoney(company.holdingBalance));
+                    $('#companyName').html(company.name);
+                    $('#did').html(company.did);
+
                 }
                 catch(e){
                     console.log('cannot parse company', e);
@@ -389,7 +430,7 @@ function build_trades(papers, panelDesc) {
                         entries[i].cusip,
                         escapeHtml(entries[i].ticker.toUpperCase()),
                         formatMoney(entries[i].par),
-                        entries[i].quantity,
+                        //  entries[i].quantity,
                         entries[i].discount,
                         entries[i].maturity,
                         entries[i].issuer,
@@ -405,6 +446,12 @@ function build_trades(papers, panelDesc) {
                         // if (user.name.toLowerCase() === entries[i].owner.toLowerCase()) {disabled = true;}			//cannot buy my own stuff
                         // if (entries[i].issuer.toLowerCase() !== entries[i].owner.toLowerCase()) {disabled = true;}
                         let button = buyButton(disabled, entries[i].cusip, entries[i].issuer);
+                        row.appendChild(button);
+                    } else if (panelDesc.name === 'holding') {
+                        let disabled = false;
+                        // if (user.name.toLowerCase() === entries[i].owner.toLowerCase()) {disabled = true;}			//cannot buy my own stuff
+                        // if (entries[i].issuer.toLowerCase() !== entries[i].owner.toLowerCase()) {disabled = true;}
+                        let button = redeemButton(disabled, entries[i].cusip, entries[i].issuer);
                         row.appendChild(button);
                     }
                     rows.push(row);

@@ -112,7 +112,7 @@ async function listOnMarket(tx) {  // eslint-disable-line no-unused-vars
         await listingRegistry.add(listing);
 
         let listingRelationship = getFactory().newRelationship(ns,'PaperListing',id);
-        market.papersForSale.push(listing);
+        market.papersForSale.push(listingRelationship);
         await marketRegistry.update(market);
 
         // to do - issue an event here

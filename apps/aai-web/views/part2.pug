@@ -20,7 +20,28 @@ block navpanel
 block content
 	#contentPanel
 		
-		//- #blockdate(title="date of last block") loading...
+		h1
+			span#companyName
+		p
+			//- span#companyName(style="font-weight:bold;") 
+			span(style="font-style:italic;")#did 
+		br
+		p
+			span(style="font-weight:bold;") Trading Balance:
+			|
+			|
+			span#accountBalance - 			
+			|
+			|
+			| 
+			span(style="font-weight:bold;") Holding Balance:
+			|
+			|
+			span#holdingBalance - 
+		br
+		button(type="submit")#refresh Refresh
+		br
+		hr
 		
 		// --------------- Create Panel
 		include panel_create
@@ -34,5 +55,5 @@ block content
 		// --------------- Audit View
 		include panel_audit
 		
-block footer
-	include template/blockchain
+//- block footer
+//- 	include template/blockchain

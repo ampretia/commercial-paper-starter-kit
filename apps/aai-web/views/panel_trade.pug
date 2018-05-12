@@ -1,7 +1,5 @@
 #tradePanel(hidden).panel
-	h1 Trade Center
-	hr
-	
+	h2 Trade Center
 	br
 	//- #tradeModal.modalDialog
 	//- 		div
@@ -22,11 +20,18 @@
 	//- 					a.filter-button(href="#close" title="Close") Close
 						
 	#openTrades
-		br
-		p
-			span(style="font-weight:bold;") Account Balance:
-			span#accountBalance Loading from blockchain...
-		br
+		//- br
+		//- p
+		//- 	span#companyName(style="font-weight:bold;") 
+		//- 	span#did 
+		//- br
+		//- p
+		//- 	span(style="font-weight:bold;") Trading Balance:
+		//- 	span#accountBalance - 
+			
+		//- 	span(style="font-weight:bold;") Holding Balance:
+		//- 	span#holdingBalance - 
+		//- br
 		//- a.filter-button(href="#tradeModal") Filter Trades
 		//- br
 		br
@@ -38,7 +43,7 @@
 					th: a.sort-selector(sort="cusip") CUSIP
 					th: a.sort-selector(sort="ticker") TICKER
 					th: a.sort-selector(sort="par") PAR
-					th: a.sort-selector(sort="quantity") QTY
+					//- th: a.sort-selector(sort="quantity") QTY
 					th: a.sort-selector(sort="discount") DISCOUNT
 					th: a.sort-selector(sort="maturity") MATURITY
 					th: a.sort-selector(sort="issuer") ISSUER

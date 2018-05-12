@@ -20,6 +20,7 @@ const companyCardName = 'AAI@local';
  */
 module.exports.issueCP = async function(cp,options={}){
     let bnc = new BusinessNetworkConnection();
+    let participantId = options.user.substr(options.user.indexOf('@')+1);
     let cardName = options.user.substr(options.user.indexOf('@')+1)+'@local';
     if (!cardName) {
         cardName = companyCardName;
@@ -31,16 +32,14 @@ module.exports.issueCP = async function(cp,options={}){
 
     let createTx = factory.newTransaction(ns,'CreatePaper');
     createTx.ticker = cp.ticker;
-    createTx.qty = parseInt(cp.qty);
     createTx.numberToCreate = parseInt(cp.qty);
     createTx.maturity = parseInt(cp.maturity);
     createTx.par = parseInt(cp.par);
     createTx.CUSIP = uuidv1();
 
     await bnc.submitTransaction(createTx);
-
+    console.log('created');
     let listTx = factory.newTransaction(ns,'ListOnMarket');
-    listTx.qty = parseInt(cp.qty);
     listTx.discount = parseInt(cp.discount);
     if (!cp.marketId){
         cp.marketId = 'US_BLUE_ONE';
@@ -49,7 +48,7 @@ module.exports.issueCP = async function(cp,options={}){
     listTx.papersToList = [];
     // need to create the references for the papers created
     for (let i=0; i<cp.qty;i++){
-        listTx.papersToList.push(factory.newRelationship(ns,'CommercialPaper',`${createTx.CUSIP}#${i}`));
+        listTx.papersToList.push(factory.newRelationship(ns,'PaperOwnership',`${participantId}#${createTx.CUSIP}#${i}`));
     }
 
     await bnc.submitTransaction(listTx);
@@ -59,19 +58,67 @@ module.exports.issueCP = async function(cp,options={}){
 /**
  *
  */
-module.exports.transferCP = async function(cp,options={}){
+module.exports.transferCP = async function(options={}){
     let bnc = new BusinessNetworkConnection();
-    let cardName = options.user.substr(options.user.indexOf('@')+1)+'@local';
+    let participantId=options.user.substr(options.user.indexOf('@')+1);
+    let cardName = participantId+'@local';
     if (!cardName) {
         cardName = companyCardName;
     }
+    let cp = options.transfer;
     let bnd = await bnc.connect(cardName);
+    let factory = bnd.getFactory();
+    if (!cp.marketId){
+        cp.marketId = 'US_BLUE_ONE';
+    }
+    if(!cp.accountId){
+        cp.accountId = `${participantId}-USD-001`;
+    }
+    let purchaseTx = factory.newTransaction(ns,'PurchasePaper');
+    purchaseTx.market = factory.newRelationship(ns,'Market',cp.marketId);
+    purchaseTx.listing = factory.newRelationship(ns,'PaperListing',cp.CUSIP);
+    purchaseTx.account = factory.newRelationship(ns,'Account',cp.accountId);
+    console.log('Submitting transaction for purchase paper');
+    await bnc.submitTransaction(purchaseTx);
 
-    let resource = bnd.getFactory().newTransaction(ns,'TransferCP');
-    await bnc.submitTransaction(Object.assign(cp,resource));
     bnc.disconnect();
 };
 
+/**
+ *
+ */
+module.exports.redeem = async function(options={}){
+    let bnc = new BusinessNetworkConnection();
+    let participantId=options.user.substr(options.user.indexOf('@')+1);
+    let cardName = participantId+'@local';
+    if (!cardName) {
+        cardName = companyCardName;
+    }
+    let cp = options.redeem;
+    let bnd = await bnc.connect(cardName);
+    let factory = bnd.getFactory();
+    if (!cp.marketId){
+        cp.marketId = 'US_BLUE_ONE';
+    }
+    if(!cp.accountId){
+        cp.accountId = `${participantId}-USD-001`;
+    }
+    let accountRegistry = await bnc.getRegistry(`${ns}.Account`);
+    let paperOwnershipRegistry = await bnc.getRegistry(`${ns}.PaperOwnership`);
+    let account = await accountRegistry.get(cp.accountId);
+    // console.log(account.assets);
+    let paperOwnership = account.assets.filter(async (e)=>{
+
+        let ownerhsip = await paperOwnershipRegistry.get(e.getIdentifier());
+        return ownerhsip.paper.getIdentifier() === cp.CUSIP;
+    });
+    let redeemTx = factory.newTransaction(ns,'RedeemPaper');
+    redeemTx.maturedPaper = paperOwnership[0];
+
+    await bnc.submitTransaction(redeemTx);
+
+    bnc.disconnect();
+};
 /**
  * Expected format of the data is
  * [
@@ -99,6 +146,7 @@ module.exports.showMarket = async function(options={}){
 
     let companiesRegistry = await bnc.getRegistry(`${ns}.Company`);
     let paperListingRegistry = await bnc.getRegistry(`${ns}.PaperListing`);
+    let paperOwnershipRegistry = await bnc.getRegistry(`${ns}.PaperOwnership`);
     let paperRegistry = await bnc.getRegistry(`${ns}.CommercialPaper`);
     let marketRegistry = await bnc.getRegistry(`${ns}.Market`);
     if (!options.mid){
@@ -110,8 +158,8 @@ module.exports.showMarket = async function(options={}){
     for (const paperListingRef of market.papersForSale) {
 
         let paperListing = await paperListingRegistry.get(paperListingRef.getIdentifier());
-
-        let paper = await paperRegistry.get(paperListing.paper.getIdentifier());
+        let paperOwnership = await paperOwnershipRegistry.get(paperListing.paperOwnership.getIdentifier());
+        let paper = await paperRegistry.get(paperOwnership.paper.getIdentifier());
 
         let issuer = await companiesRegistry.get(paper.issuer.getIdentifier());
         let owner;
@@ -142,6 +190,44 @@ module.exports.showMarket = async function(options={}){
     return listingsTable;
 };
 
+
+
+module.exports.getCompany = async function(options={}){
+    let bnc = new BusinessNetworkConnection();
+    let cardName = options.user.substr(options.user.indexOf('@')+1)+'@local';
+    if (!cardName) {
+        cardName = companyCardName;
+    }
+
+    let result = {};
+
+    const adminConnection = new AdminConnection();
+    await adminConnection.connect(cardName);
+    let metaData = await adminConnection.ping();
+    let participantId = metaData.participant.substr(metaData.participant.indexOf('#')+1);
+    await adminConnection.disconnect();
+
+    await bnc.connect(cardName);
+
+    let companiesRegistry = await bnc.getRegistry(`${ns}.Company`);
+    let accountRegistry = await bnc.getRegistry(`${ns}.Account`);
+    let company = await companiesRegistry.get(participantId);
+    result.name = company.name;
+    result.did =  `${company.publicdid.scheme}:${company.publicdid.method}:${company.publicdid.identifier}`;
+
+
+    let holdingAccount = await  accountRegistry.get(company.issuedPaperAccount.getIdentifier());
+    result.holdingBalance = holdingAccount.cashBalance;
+    result.cashBalance = 0;
+    for (const accountRef of company.paperTradingAccounts){
+        let account = await accountRegistry.get(accountRef.getIdentifier());
+        result.cashBalance+=account.cashBalance;
+    }
+
+    return result;
+
+};
+
 module.exports.ownHoldings = async function(options={}){
     let bnc = new BusinessNetworkConnection();
     let cardName = options.user.substr(options.user.indexOf('@')+1)+'@local';
@@ -170,8 +256,8 @@ module.exports.ownHoldings = async function(options={}){
 
     let company = await companiesRegistry.get(participantId);
     let listingsTable = [];
-
-    for (const paperref of company.issuedNotTraded){
+    let issuedPaperAccount = await accountRegistry.get(company.issuedPaperAccount.getIdentifier());
+    for (const paperref of issuedPaperAccount.assets){
         let paperOwnership = await paperOwnershipRegistry.get(paperref.getIdentifier());
         let paper = await paperRegistry.get(paperOwnership.paper.getIdentifier());
         let entry = {
@@ -183,13 +269,13 @@ module.exports.ownHoldings = async function(options={}){
             discount: 0.,
             maturity: paper.maturity,
             issuer: company.name,
-            owner: 'na'
+            owner: options.user.substr(options.user.indexOf('@')+1)
         };
 
         listingsTable.push(entry);
     }
 
-    for (const accountRef of company.accountsManaged){
+    for (const accountRef of company.paperTradingAccounts){
         let account = await accountRegistry.get(accountRef.getIdentifier());
         for (const paperRef of account.assets){
             let ownership = await paperOwnershipRegistry.get(paperRef.getIdentifier());
