@@ -1,0 +1,13 @@
+#header {
+    position: relative;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    padding: 10px 25px;
+    box-sizing: border-box;
+    background-color: #d8d8d8;
+}
+
+#header span:last-child {
+    float: right;
+}

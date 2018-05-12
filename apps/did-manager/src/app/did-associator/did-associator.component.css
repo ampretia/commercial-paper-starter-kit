@@ -1,0 +1,48 @@
+.did-association {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin-bottom: 25px;
+}
+
+.did-association div {
+    display: inline-block;
+}
+
+.participant {
+    padding: 10px;
+    border: 1px solid #595859;
+}
+
+.did-association.joined .participant {
+    padding: 10px 25px 10px 10px;
+}
+
+.join {
+    margin-left: -15px;
+    height: 50px;
+    width: 50px;
+    border: 1px solid #595859;
+    border-radius: 37.5px;
+    background-color: #FFF;
+    background-image: url('/assets/icons/link.svg');
+    background-size: 50%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.did {
+    padding: 10px;
+    border: 1px solid #595859;
+    margin-left: 25px;
+}
+
+.did-association.joined .did {
+    padding: 10px 10px 10px 25px;
+    margin-left: -15px;
+    z-index: -1;
+}
+
+button {
+    margin-left: 25px;
+}
