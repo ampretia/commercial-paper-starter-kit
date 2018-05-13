@@ -1,4 +1,5 @@
 import falcon
+import uuid
 
 class HelloWorldResource:
 
@@ -23,6 +24,9 @@ class DIDS:
 
     def on_post(self,request,response):
         self.count+=1
+        # for testing in case the identity server stops
+        if (len(self.dids) == self.count):
+           self.dids.append(uuid.uuid4().hex[:22])
         response.media = self.dids[self.count-1]
 
 

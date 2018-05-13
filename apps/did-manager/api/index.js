@@ -27,7 +27,7 @@ router.post('/did', (req, res) => {
 
 router.get('/did/all', (req, res) => {
     // GET ALL DIDs FROM SERVER
-    request.post(didServer, {}, (err, resp, body) => {
+    request.get(didServer, {}, (err, resp, body) => {
         if (err) {
             res.status(500).send({message: 'Error getting DIDs'});
         }
