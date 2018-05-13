@@ -33,10 +33,13 @@ const bootstrap_sh = path.resolve('.','contracts','commercial-paper-network','bo
 const startindy_sh = path.resolve('.','services','identity','startIndy.sh');
 const stopindy_sh = path.resolve('.','services','identity','stopIndy_sh');
 
+const tradeapp_sh = path.resolve('.','apps','aai-web','start.sh');
+const didmanager_sh = path.resolve('.','apps','did-manager.sh','start.sh');
+
 
 gulp.task('gendid',()=>{
-   let options= {method:'POST',uri:'http://localhost:8888/DID'}
-   return	rp(options)
+    let options= {method:'POST',uri:'http://localhost:8888/DID'};
+    return rp(options);
 });
 
 gulp.task('default', function () {
@@ -157,6 +160,29 @@ gulp.task('stopindy', ()=>{
     });
 } );
 
+/**
+ * runs the DID Manager Web app to associated Composer Participants to PublicDIDs
+ *
+ * @task {didmanager}
+ */
+gulp.task('didmanager', ()=>{
+    let fn = run([didmanager_sh]);
+    return fn().then(()=>{
+    	console.log('>> App running at http://localhost:6002/ ');
+    });
+} );
+
+/**
+ * runs the Trade Application to trade Commercial Paper
+ *
+ * @task {tradeapp}
+ */
+gulp.task('tradeapp', ()=>{
+    let fn = run([tradeapp_sh]);
+    return fn().then(()=>{
+    	console.log('>>  App running at http://localhost:3000/login ');
+    });
+} );
 
 /**
  * Outputs the current envionment variables specifically used for Composer/Fabric

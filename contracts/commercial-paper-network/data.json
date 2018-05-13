@@ -19,7 +19,7 @@
                     "$class": "org.example.commercialpaper.DID",
                     "scheme": "did",
                     "method": "sov",
-                    "identifier": "ai3ngBhByaxg35"
+                    "identifier": "---------------"
                   },
                   "paperTradingAccounts":[
                     "resource:org.example.commercialpaper.Account#AAI-USD-001",
@@ -35,7 +35,7 @@
                     "$class": "org.example.commercialpaper.DID",
                     "scheme": "did",
                     "method": "sov",
-                    "identifier": "k47890623hM0hvfd"
+                    "identifier": "---------------"
                   },
                   "paperTradingAccounts":[
                     "resource:org.example.commercialpaper.Account#BAH-USD-001",
@@ -51,7 +51,7 @@
                     "$class": "org.example.commercialpaper.DID",
                     "scheme": "did",
                     "method": "sov",
-                    "identifier": "7nbGDFklbFFl8lkhx"
+                    "identifier": "---------------"
                   },
                   "paperTradingAccounts":[
                   ],
