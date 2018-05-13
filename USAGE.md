@@ -10,10 +10,16 @@ an individual trader working for a broker for example has a participant but woul
 - Aardvark Investing, and Badge & Honey are the two brokers, referred to as AAI and BAH respectively
 - Ampretia Industries is the commerical firm who primarily will be issuing the commerical paper to raise funds for short term obligations - eg to support a current large contract more short term staff have been required - more cash is needed for the payroll ahead of the contract being complete. 
 
+# Technology in use
+
+1. There is a setup of Hyperledger Fabric v1.1, together with a deployed Hyperledger Composer network
+2. There is a web-ui for trading commercial paper
+3. There is a setup and simple rest API overlaying Hyperledger Indy basic setup
+4. There is a simple web-ui to demonstrate how Public DIDs can be associated with Composer participants
 
 # Setup
 
-0. You will need Docker, Node and Git installed on your machine
+0. You will need Docker, Node and Git installed on your machine; in addition the utility 'jq' is used to process some JSON files. This is sometimes installed Linux, but not on Mac. More information on installation at the [jq website](https://stedolan.github.io/jq/download/)
 
 1. Clone this repository
 ```
@@ -31,10 +37,10 @@ The `npm install` will start up a local Hyperledger Fabric environment for you. 
 If you wish to re-run the Hyperledger Fabric installation, and deploy the network again . i.e. clean up but you don't want to reinstall all the npm modules issues
 
 ```
-gulp startnetwork
+npx gulp startnetwork
 ```
 
-> Tip:   just type `gulp` to get a help summary
+> Tip:   just type `gulp` to get a help summary of what available options are
 
 
 3. It is then *strongly* recommended to put in some sample data and companies to get going. 
@@ -229,12 +235,5 @@ So Aardvark Investing have purchased this paper - that we can now see if they li
 
 
 
-## Web Application
-Change to the directory `apps/aai-web` and enter
 
-```
-npm start
-```
-
-This will start up the web application - open a browser and navigate to `localhost:3000`
 
