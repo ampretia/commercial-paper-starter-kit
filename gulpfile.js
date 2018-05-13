@@ -34,7 +34,7 @@ const startindy_sh = path.resolve('.','services','identity','startIndy.sh');
 const stopindy_sh = path.resolve('.','services','identity','stopIndy_sh');
 
 const tradeapp_sh = path.resolve('.','apps','aai-web','start.sh');
-const didmanager_sh = path.resolve('.','apps','did-manager.sh','start.sh');
+const didmanager_sh = path.resolve('.','apps','did-manager','start.sh');
 
 
 gulp.task('gendid',()=>{
