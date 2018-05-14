@@ -16,7 +16,7 @@ class DIDS:
         ds = file.readlines() 
         self.count = 0
         for x in ds:
-            self.dids.append(x.rstrip())
+            self.dids.append('did:sov:'+x.rstrip())
            
 
     def on_get(self, request, response):            
