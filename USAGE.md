@@ -21,39 +21,18 @@ an individual trader working for a broker for example has a participant but woul
 
 0. You will need Docker, Node and Git installed on your machine; in addition the utility 'jq' is used to process some JSON files. This is sometimes installed Linux, but not on Mac. More information on installation at the [jq website](https://stedolan.github.io/jq/download/)
 
-1. Clone this repository
-```
-git clone https://github.com/ampretia/commercial-paper-starter-kit.git
-```
-
-2. Changed into the directory created and install
-```
-cd commerical-paper-starter-kit
-npm install
-```
-
-The `npm install` will start up a local Hyperledger Fabric environment for you. In addition it will deploy the business network (built with Hyperledger Composer) to Fabric.
-
-If you wish to re-run the Hyperledger Fabric installation, and deploy the network again . i.e. clean up but you don't want to reinstall all the npm modules issues
+1. The simplest way to get things setup and started is to download a simple start script. This kicks off the main processes
 
 ```
-npx gulp startnetwork
+wget -q https://raw.githubusercontent.com/ampretia/commercial-paper-starter-kit/master/cp-install.sh
+chmod +x cp-install.sh
+. ./cp-install.sh
 ```
 
-> Tip:   just type `gulp` to get a help summary of what available options are
+2. A lot will now happen, to pull down Hyperledger Fabric and Indy docker images, and create the servers and setup applications. 
+Hopefully two windows will open as well, to the web-uis used. 
 
-
-3. It is then *strongly* recommended to put in some sample data and companies to get going. 
-```
-npx gulp bootstrap
-```
-
-4. Allmost - done; a locally running Hyperledger Fabric, deployed with a business network. Data for 2 brokers and an commercial company created. 
-Identities for those companies have been created - and 'cards' for those identies have been created and stored. 
-
-You will need copy the line that starts  `export NODE_CONFIG ` and paste that into a console window. Would suggesting opening a couple and entering this into both of them.
-
-Once you've done that just type
+Also from the command line, type
 
 ```
 npx composer card list
@@ -88,7 +67,9 @@ Command succeeded
 
 If you don't see the above, and there weren't any errors being reported it is most likey that the `NODE_CONFIG` envronment variable hasn't been set.. run `gulp env` to get a summary of what it is set to currently. 
 
-# Paper trading
+> To see a demo of how the UIs work [see this short video](https://youtu.be/URBjldVrhQk)
+
+# Paper trading - CLI
 
 There is a cli application you will need to use the console to trade in commerical paper. In additional there are two web-based UIs for trading. One is specific to the scenario i.e. trading commercial paper. The second, is an example of how the Hyperleder Composer generator (that uses the Yeoman framework) can be used to create a 'starter' Angular-2 application. 
 
