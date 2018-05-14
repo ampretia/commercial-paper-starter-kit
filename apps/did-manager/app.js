@@ -16,7 +16,6 @@
 
 'use strict';
 
-const cfenv = require('cfenv');
 const fs = require('fs');
 const express = require('express');
 const http = require('http');
@@ -27,7 +26,6 @@ const api = require('./api');
 
 const app = express();
 const server = http.createServer(app);
-const appEnv = cfenv.getAppEnv();
 
 const dist = path.join(__dirname, 'dist/did-manager');
 if (!fs.existsSync(dist)) {
@@ -44,6 +42,6 @@ app.get('*', (req, res) => {
     res.sendFile(path.join(dist, 'index.html'));
 });
 
-server.listen(appEnv.port, function () {
-    console.log('server starting on ' + appEnv.url);
+server.listen(6002, function () {
+    console.log('server starting on 6002');
 });
