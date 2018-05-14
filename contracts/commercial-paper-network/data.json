@@ -15,12 +15,6 @@
                 "$class": "org.example.commercialpaper.Company",
                 "symbol": "AAI",
                 "name": "Aardvark Investing",
-                "publicdid": {
-                    "$class": "org.example.commercialpaper.DID",
-                    "scheme": "did",
-                    "method": "sov",
-                    "identifier": "---------------"
-                  },
                   "paperTradingAccounts":[
                     "resource:org.example.commercialpaper.Account#AAI-USD-001",
                     "resource:org.example.commercialpaper.Account#AAI-GBP-001"
@@ -31,12 +25,7 @@
                 "$class": "org.example.commercialpaper.Company",
                 "symbol": "BAH",
                 "name": "Badger & Honey",
-                "publicdid": {
-                    "$class": "org.example.commercialpaper.DID",
-                    "scheme": "did",
-                    "method": "sov",
-                    "identifier": "---------------"
-                  },
+
                   "paperTradingAccounts":[
                     "resource:org.example.commercialpaper.Account#BAH-USD-001",
                     "resource:org.example.commercialpaper.Account#BAH-GBP-001"
@@ -47,12 +36,7 @@
                 "$class": "org.example.commercialpaper.Company",
                 "symbol": "AMI",
                 "name": "Ampretia Industries Inc.",
-                "publicdid": {
-                    "$class": "org.example.commercialpaper.DID",
-                    "scheme": "did",
-                    "method": "sov",
-                    "identifier": "---------------"
-                  },
+
                   "paperTradingAccounts":[
                   ],
                   "issuedPaperAccount": "resource:org.example.commercialpaper.Account#AMI-ISSUED-USD"

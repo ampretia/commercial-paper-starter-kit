@@ -59,7 +59,7 @@ enum Currency {
 participant Company identified by symbol {
   o String      symbol
   o String      name
-  o DID         publicdid
+  o DID         publicdid  optional
   --> Account[] paperTradingAccounts
   --> Account   issuedPaperAccount
 }
