@@ -14,6 +14,9 @@ npm install
 export NODE_CONFIG=$(cat ./nodeconfig.json)
 npx gulp bootstrap
 npx gulp startindy
+echo "Sleeping for a while to let the servers start up"
+sleep 15
+
 npx gulp tradeapp
 npx gulp didmanager
 

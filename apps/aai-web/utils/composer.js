@@ -213,8 +213,16 @@ module.exports.getCompany = async function(options={}){
     let accountRegistry = await bnc.getRegistry(`${ns}.Account`);
     let company = await companiesRegistry.get(participantId);
     result.name = company.name;
-    result.did =  `${company.publicdid.scheme}:${company.publicdid.method}:${company.publicdid.identifier}`;
+    if (!company.publicdid){
+        result.did = 'no Public DID assigned';
+    } else {
 
+
+        let scheme = company.publicdid.scheme ? company.publicdid.scheme : '-';
+        let method = company.publicdid.method ? company.publicdid.method : '-';
+        let identifier = company.publicdid.identifier ? company.publicdid.identifier : '-';
+        result.did =  `${scheme}:${method}:${identifier}`;
+    }
 
     let holdingAccount = await  accountRegistry.get(company.issuedPaperAccount.getIdentifier());
     result.holdingBalance = holdingAccount.cashBalance;
