@@ -9,7 +9,6 @@
   "dependencies": {
     "async": "^2.1.2",
     "body-parser": "^1.15.2",
-    "cf-deployment-tracker-client": "^0.1.1",
     "composer-admin": "^0.19.5",
     "composer-client": "^0.19.5",
     "compression": "^1.6.2",
@@ -17,7 +16,6 @@
     "cors": "^2.8.1",
     "express": "^4.14.0",
     "express-session": "^1.14.2",
-    "hfc": "0.6.5",
     "morgan": "^1.7.0",
     "pug": "^2.0.0-beta6",
     "serve-static": "^1.11.1",
