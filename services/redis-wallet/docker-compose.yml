@@ -1,0 +1,14 @@
+version: '3'
+services:
+   redis-wallet:
+    image: redis
+    container_name: composer-wallet-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - cp-network
+
+networks:
+  cp-network:
+    external:
+      name: cp-network

@@ -1,11 +1,11 @@
 {
-    "card": "admin@local",
+    "card": "admin@commercial-paper-network",
     "BatchSize": 10,
     "composer": {
         "wallet": {
             "type": "composer-wallet-filesystem",
             "options": {
-                "storePath": "/home/matthew/github/cp-network-sk/_local/composer-store"
+                "storePath": "/home/matthew/ibm-docker/_local/composer-store"
             }
         }
     },

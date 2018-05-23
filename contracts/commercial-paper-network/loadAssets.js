@@ -69,7 +69,10 @@ async function loadData(fullPathJson){
             await registry.addAll(resourcesToAdd);
         }
 
+        LOG.info('> All the data processed');
         await businessNetworkConnection.disconnect();
+        LOG.info('> Disconnected');
+        process.exit(0);  // needed for the dev proxy connector atm
     } catch (error) {
         LOG.error(error);
         throw error;

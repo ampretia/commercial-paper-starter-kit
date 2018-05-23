@@ -2,7 +2,7 @@
   "name": "did-manager",
   "version": "0.0.0",
   "scripts": {
-    "postinstall":"npm run build",
+    "postinstall": "npm run build",
     "ng": "ng",
     "start": "node app.js",
     "build": "ng build",

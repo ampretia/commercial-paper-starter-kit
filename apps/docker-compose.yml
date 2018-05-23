@@ -1,0 +1,15 @@
+version: '3'
+services:
+  cp-cli:
+    build:
+      context: ./cp-cli
+      dockerfile: Dockerfile
+    image: cp-cli
+    container_name: cp-cli
+    networks:
+     - cp-network
+    command: ["/bin/bash"]      
+networks:
+  cp-network:
+     external:
+        name: cp-network

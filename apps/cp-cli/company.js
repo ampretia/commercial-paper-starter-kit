@@ -109,9 +109,10 @@ async function showCompany(userCardName){
 
 }
 
-let cardname = process.env.CP_COMPANY;
-if (!cardname){
-    console.log('need CP_COMPANY set to something');
-    process.exit(1);
-}
-showCompany(cardname).catch((err)=>{ process.exit(1);});
+// let cardname = process.env.CP_COMPANY;
+// if (!cardname){
+//     console.log('need CP_COMPANY set to something');
+//     process.exit(1);
+// }
+// showCompany(cardname).catch((err)=>{ process.exit(1);});
+module.exports = showCompany;

@@ -7,6 +7,7 @@
     "start": "node app.js"
   },
   "dependencies": {
+    "@ampretia/composer-wallet-ibmcos": "^0.1.3",
     "async": "^2.1.2",
     "body-parser": "^1.15.2",
     "composer-admin": "^0.19.5",
@@ -23,8 +24,7 @@
     "ws-promise": "^1.5.7"
   },
   "engines": {
-    "node": "^6.10.0",
-    "npm": "^3.10.8"
+    "node": "^8.9.0"
   },
   "repository": {
     "type": "git",

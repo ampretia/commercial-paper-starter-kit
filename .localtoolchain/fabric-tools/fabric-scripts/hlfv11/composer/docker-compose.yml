@@ -13,6 +13,8 @@ services:
     volumes:
       - ./crypto-config/peerOrganizations/org1.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
     container_name: ca.org1.example.com
+    networks:
+     - cp-network    
 
   orderer.example.com:
     container_name: orderer.example.com
@@ -31,6 +33,8 @@ services:
     volumes:
         - ./:/etc/hyperledger/configtx
         - ./crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/msp:/etc/hyperledger/msp/orderer/msp
+    networks:
+     - cp-network        
 
   peer0.org1.example.com:
     container_name: peer0.org1.example.com
@@ -59,6 +63,8 @@ services:
     depends_on:
       - orderer.example.com
       - couchdb
+    networks:
+     - cp-network      
 
   couchdb:
     container_name: couchdb
@@ -67,5 +73,10 @@ services:
       - 5984:5984
     environment:
       DB_URL: http://localhost:5984/member_db
+    networks:
+     - cp-network      
 
-
+networks:
+  cp-network:
+     external:
+        name: cp-network
