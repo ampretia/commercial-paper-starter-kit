@@ -18,15 +18,90 @@
 const ns = 'org.example.commercialpaper';
 
 /**
+ * This creates a new Commerical Paper instance, and creates an ownership record for the company
+ * that issued it. This is held in a specific account that the issuing company can use to tracks it's liabilities
+ *
+ * @param {org.example.commercialpaper.CreatePaper} tx - the   transaction instance
+ * @transaction
+ */
+async function createPaper(tx) {  // eslint-disable-line no-unused-vars
+
+    // Get the registry to store this new asset in
+    const assetRegistry = await getAssetRegistry(`${ns}.CommercialPaper`);
+    const companyRegistry = await getParticipantRegistry(`${ns}.Company`);
+    let company =  getCurrentParticipant();
+    const accountRegistry = await getAssetRegistry(`${ns}.Account`);
+
+    for (let i=0; i<tx.numberToCreate; i++) {
+        // create the paper and add ito the registry
+        let paperId= `${tx.CUSIP}#${i}`;
+        let paper = getFactory().newResource(ns, 'CommercialPaper', paperId);
+        paper.ticker = tx.ticker;
+        paper.currency = tx.workingCurrency;
+        paper.par = tx.par;
+        paper.maturity = tx.maturity;
+        paper.issueDate = tx.timestamp;
+
+        // set the issuer and owner to be company that the current participant works for
+        paper.issuer = company;
+        paper.owner = company;
+
+        // set the owning account to the issuedPaperAccount of the issuing company
+        paper.owningAccount = company.issuedPaperAccount;
+
+        // Update the asset in the asset registry.
+        await assetRegistry.add(paper);
+
+        // Update the Company participant and its Account asset
+        let c = await companyRegistry.get(company.getIdentifier());
+        let ac = await accountRegistry.get(c.issuedPaperAccount.getIdentifier());
+        ac.assets.push(paper);
+        await companyRegistry.update(c);
+        await accountRegistry.update(ac);
+
+        // emit event
+        const createEvent = getFactory().newEvent(ns, 'CreatePaperEvent');
+        createEvent.paper = paper;
+        emit(createEvent);
+    }
+}
+
+/**
+ * This lists an already created Commercial Paper instance on a market. This could be
+ * either one just created by a company to raise funds, or could be being traded
+ *
+ * @param {org.example.commercialpaper.ListOnMarket} tx - the transaction instance
+ * @transaction
+ */
+async function listOnMarket(tx) {  // eslint-disable-line no-unused-vars 
+    let market = tx.market;  
+    // validation
+    // market can accept the papers to be listed, currency correct etc etc.
+    const marketRegistry = await getAssetRegistry(`${ns}.Market`);
+    const companyRegistry = await getParticipantRegistry(`${ns}.Company`);
+    
+    for (const paper of tx.papersToList) {
+        let company = await companyRegistry.get(paper.owner.getIdentifier());
+
+        let listing = getFactory().newConcept(ns,'PaperListing');
+        listing.ID = market.getIdentifier()+'='+paper.getIdentifier();
+        listing.paper = getFactory().newRelationship(ns, 'CommercialPaper', paper.CUSIP);
+        listing.currentOwner = getFactory().newRelationship(ns, 'Company', company.symbol);
+        listing.discount = tx.discount;
+
+        market.papersForSale.push(listing);
+    }
+    await marketRegistry.update(market);
+    
+    // emit event
+    const listEvent = getFactory().newEvent(ns, 'ListOnMarketEvent');
+    listEvent.market = market;
+    emit(listEvent);
+}
+
+/**
  * This purchases a paper from a market
- *
- * transaction PurchasePaper {
- *  --> Market market
- *	--> PaperListing listing
- *  --> Account account
- * }
- *
- * @param {org.example.commercialpaper.PurchasePaper} tx The sample transaction instance.
+ * @param {org.example.commercialpaper.PurchasePaper} tx - the transaction instance.
  * @transaction
  */
 async function purchasePaper(tx) {  // eslint-disable-line no-unused-vars
@@ -34,184 +109,92 @@ async function purchasePaper(tx) {  // eslint-disable-line no-unused-vars
     let market = tx.market;
     let companyBuying = getCurrentParticipant();
 
-
-    const listingRegistry = await getAssetRegistry(`${ns}.PaperListing`);
     const marketRegistry = await getAssetRegistry(`${ns}.Market`);
-    const ownershipRegistry = await getAssetRegistry(`${ns}.PaperOwnership`);
+    const paperRegistry = await getAssetRegistry(`${ns}.CommercialPaper`);
     const accountRegistry = await getAssetRegistry(`${ns}.Account`);
+    const companyRegistry = await getParticipantRegistry(`${ns}.Company`);
 
-    let listingId = tx.listing.getIdentifier();
-    let currentHolder = tx.listing.paperOwnership.owner;
-    let currentAccount = tx.listing.paperOwnership.owningAccount;
-    let paper = tx.listing.paperOwnership.paper;
-
+    let paperListing;
+    market.papersForSale.map((listing) => {
+        if (listing.ID === tx.listingID) {
+            paperListing =  listing;
+        }
+    });
+    let paper = await paperRegistry.get(paperListing.paper.getIdentifier());
+    let currentOwner = await companyRegistry.get(paperListing.currentOwner.getIdentifier());
+    
     // this is being purchased so we need to remove the PaperListing asset
-    await listingRegistry.remove(listingId);
-    market.papersForSale = market.papersForSale.filter((e)=>{
-        return e.getIdentifier() !== listingId;
+    market.papersForSale.pop(paperListing);
+    market.papersForSale = market.papersForSale.filter((e)=> {
+        return e.getIdentifier() !== tx.listingID;
     });
     await marketRegistry.update(market);
 
-    // Create a new ownership asset and add
-    let ownership = getFactory().newResource(ns,'PaperOwnership',companyBuying.symbol+'#'+paper.CUSIP);
-    ownership.paper = paper;
-    ownership.owner = companyBuying;
-    ownership.owningAccount = tx.account;
-    await ownershipRegistry.add(ownership);
-
-    // remove the ownership asset that previously existed
-    await ownershipRegistry.remove(tx.listing.paperOwnership.getIdentifier());
-
     // make sure the previously owning company doesn't have it any more in their accounts
-    currentAccount.assets = currentAccount.assets.filter((e)=> {
-        console.log(e);
-        return e.getIdentifier() !== tx.listing.paperOwnership.getIdentifier();
-    });
-    console.log('2');
-    console.log(tx.account);
+    let currentAccount = await accountRegistry.get(paper.owningAccount.getIdentifier());
+    currentAccount.assets.pop(paperListing.paper);
+
     // now need to get the account that this was purchased via and update that
-    tx.account.assets.push(
-        getFactory().newRelationship(ns,'PaperOwnership',companyBuying.symbol+'#'+paper.CUSIP));
+    let newAccount = await accountRegistry.get(tx.account.getIdentifier());
+    newAccount.assets.push(getFactory().newRelationship(ns, 'CommercialPaper', paperListing.paper.CUSIP));
 
     // money transfer
-    let discountedValue = paper.par * (100-tx.listing.discount) / 100;
+    let discountedValue = paper.par * (100-paperListing.discount) / 100;
     // remove that from account 'buying'
-    // add that to the account 'selling'
     currentAccount.cashBalance += discountedValue;
-    tx.account.cashBalance -= discountedValue;
+    // add that to the account 'selling'
+    newAccount.cashBalance -= discountedValue;
 
-
+    // TODO - this doesn't work, figure out why
     await accountRegistry.update(currentAccount);
-    await accountRegistry.update(tx.account);
+    await accountRegistry.update(newAccount);
+
+    // update the owner of the commercial paper
+    paper.owner = companyBuying;
+    paper.owningAccount = newAccount;
+    await paperRegistry.update(paper);
+
+    // emit event
+    const purchaseEvent = getFactory().newEvent(ns, 'PurchasePaperEvent');
+    purchaseEvent.paper = paper;
+    emit(purchaseEvent);
 }
 
 /**
- * This lists an already created Commercial Paper instance on a market. This could be
- * either one just created by a company to raise funds, or could be being traded
- *
- * @param {org.example.commercialpaper.ListOnMarket} tx transaction instance
+ * Paper has matured and now it can be redeemed 
+ * @param {org.example.commercialpaper.RedeemPaper} tx - the transaction instance
  * @transaction
  */
-async function listOnMarket(tx) {  // eslint-disable-line no-unused-vars
+async function redeemPaper(tx){
+    let maturedPaper = tx.maturedPaper;
 
-    let market = tx.market;
-    let company =  getCurrentParticipant();
-    // validation
-    // market can accept the papers to be listed, currency correct etc etc.
-    const marketRegistry = await getAssetRegistry(`${ns}.Market`);
-    const listingRegistry = await getAssetRegistry(`${ns}.PaperListing`);
+    let parValue = maturedPaper.par;
+    let issuer = maturedPaper.issuer;
 
-    //
-    for (const paperListing of tx.papersToList) {
-        let paper = paperListing.paper;
-        let id = market.getIdentifier()+'='+paper.getIdentifier();
-        let listing = getFactory().newResource(ns,'PaperListing',id);
-        listing.paperOwnership = paperListing;
-        listing.discount = tx.discount;
+    let owningAccount = maturedPaper.owningAccount;
+    owningAccount.cashBalance += parValue;
 
-        await listingRegistry.add(listing);
-
-        let listingRelationship = getFactory().newRelationship(ns,'PaperListing',id);
-        market.papersForSale.push(listingRelationship);
-        await marketRegistry.update(market);
-
-        // to do - issue an event here
-
-    }
-}
-
-/**
- * This creates a new Commerical Paper instance, and creates an ownership record for the company
- * that issued it. This is held in a specific account that the issuing company can use to tracks it's liabilities
- *
- *
- * @param {org.example.commercialpaper.CreatePaper} tx create new paper(s)
- * @transaction
- */
-async function createPaper(tx) {  // eslint-disable-line no-unused-vars
-
-    // Get the registry to store this new asset in
-    let regName = `${ns}.CommercialPaper`;
-    const assetRegistry = await getAssetRegistry(regName);
-    const companyRegistry = await getParticipantRegistry(`${ns}.Company`);
-    let company =  getCurrentParticipant();
-    const ownershipRegistry = await getAssetRegistry(`${ns}.PaperOwnership`);
-    const accountRegistry = await getAssetRegistry(`${ns}.Account`);
-
-    for (let i=0; i<tx.numberToCreate; i++){
-        // create the paper and add ito the registry
-        let paperId= `${tx.CUSIP}#${i}`;
-        let paper = getFactory().newResource(ns,'CommercialPaper',paperId);
-        paper.ticker = tx.ticker;
-        paper.par = tx.par;
-        paper.currency = tx.workingCurrency;
-        paper.maturity = tx.maturity;
-        paper.issueDate = tx.timestamp;
-
-        // set the issuer and owner to be company that the current participant works for
-        paper.issuer = company;
-
-        // Update the asset in the asset registry.
-        await assetRegistry.add(paper);
-
-        // add it to the ownership of the company that issues it
-        // change the paper to be held by the new owner
-        let ownership = getFactory().newResource(ns,'PaperOwnership',company.symbol+'#'+paperId);
-        ownership.paper = paper;
-        ownership.owner = company;
-        ownership.owningAccount = getFactory().newRelationship(ns,'Account',company.issuedPaperAccount.getIdentifier());
-
-        // add it to their listings.
-        await ownershipRegistry.add(ownership);
-
-        let ownershipRelation = getFactory().newRelationship(ns,'PaperOwnership',company.symbol+'#'+paperId);
-
-        let c = await companyRegistry.get(company.getIdentifier());
-        let ac = await accountRegistry.get(c.issuedPaperAccount.getIdentifier());
-        console.log(ac);
-        ac.assets.push(ownershipRelation);
-        await companyRegistry.update(c);
-        await accountRegistry.update(ac);
-    }
-}
-
-
-
-/**
- * Paper has matured and now it can be redeemed
- * @param {org.example.commercialpaper.RedeemPaper} tx transaction
- * @transaction
- */
-async function redeem(tx){
-    let currentOwnership = tx.maturedPaper;
-
-    let parValue = currentOwnership.paper.par;
-    let issuer = currentOwnership.paper.issuer;
-
-    let accountOfCurrentHolder = currentOwnership.owningAccount;
-    accountOfCurrentHolder.cashBalance += parValue;
-
-    let accountOfIssuer = issuer.issuedPaperAccount;
-    accountOfIssuer.cashBalance -= parValue;
+    let issuingAccount = issuer.issuedPaperAccount;
+    issuingAccount.cashBalance -= parValue;
 
     const accountRegistry = await getAssetRegistry(`${ns}.Account`);
-
 
     // remove the paper from the holders accounts
-    accountOfCurrentHolder.assets = accountOfCurrentHolder.assets.filter((e)=> {
-        console.log(e);
-        return e.getIdentifier() !== currentOwnership.getIdentifier();
+    owningAccount.assets = owningAccount.assets.filter((e)=> {
+        return e.getIdentifier() !== maturedPaper.getIdentifier();
     });
 
-    await accountRegistry.update(accountOfCurrentHolder);
-    await accountRegistry.update(accountOfIssuer);
+    await accountRegistry.update(owningAccount);
+    await accountRegistry.update(issuingAccount);
+
+    // emit event
+    const redeemEvent = getFactory().newEvent(ns, 'RedeemPaperEvent');
+    redeemEvent.maturedPaper = maturedPaper;
 }
 
 /**
- *
  * Assign the supplied DID to the participant
- *
- * @param {org.example.commercialpaper.AssignDid} tx assign DID tx
+ * @param {org.example.commercialpaper.AssignDid} tx - the transaction instance
  * @transaction
  */
 async function assignDid(tx) {
@@ -223,6 +206,8 @@ async function assignDid(tx) {
 
     await companyRegistry.update(assignee);
 
+    // emit event
+    const didEvent = getFactory().newEvent(ns, 'AssignDidEvent');
+    didEvent.targetCompany = assignee;
+    emit(didEvent);
 }
-
-
