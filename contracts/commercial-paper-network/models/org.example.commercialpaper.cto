@@ -70,7 +70,8 @@ participant Company identified by symbol {
    */
 asset Account identified by ID {
   o String	ID            
-  o String  summary          
+  o String  summary   
+  o String name       
   o Currency workingCurrency default="USD"
   o Double	cashBalance  
   --> PaperOwnership[]  assets

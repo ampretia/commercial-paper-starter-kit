@@ -1,0 +1,373 @@
+{
+    "$class": "org.example.commercialpaper.Market",
+    "ID": "US_BLUE_ONE",
+    "name": "US  paper market",
+    "currency": "USD",
+    "papersForSale": [
+        {
+            "$class": "org.example.commercialpaper.PaperListing",
+            "ID": "US_BLUE_ONE=221232b0-64e0-11e8-b627-35b341dd9f2a#0",
+            "paperOwnership": {
+                "$class": "org.example.commercialpaper.PaperOwnership",
+                "ID": "AMI#221232b0-64e0-11e8-b627-35b341dd9f2a#0",
+                "paper": {
+                    "$class": "org.example.commercialpaper.CommercialPaper",
+                    "CUSIP": "221232b0-64e0-11e8-b627-35b341dd9f2a#0",
+                    "ticker": "fred",
+                    "currency": "USD",
+                    "par": 120000,
+                    "maturity": 120,
+                    "issuer": {
+                        "$class": "org.example.commercialpaper.Company",
+                        "symbol": "AMI",
+                        "name": "Ampretia Industries Inc.",
+                        "paperTradingAccounts": [],
+                        "issuedPaperAccount": {
+                            "$class": "org.example.commercialpaper.Account",
+                            "ID": "AMI-ISSUED-USD",
+                            "summary": "US Trading account 1",
+                            "name": "USD-001-ISSUED",
+                            "workingCurrency": "USD",
+                            "cashBalance": 0,
+                            "assets": [
+                                "resource:org.example.commercialpaper.PaperOwnership#AMI%23221232b0-64e0-11e8-b627-35b341dd9f2a%230",
+                                {
+                                    "$class": "org.example.commercialpaper.PaperOwnership",
+                                    "ID": "AMI#44a8f4b0-64e2-11e8-8b81-e18d7946a4ee#0",
+                                    "paper": {
+                                        "$class": "org.example.commercialpaper.CommercialPaper",
+                                        "CUSIP": "44a8f4b0-64e2-11e8-8b81-e18d7946a4ee#0",
+                                        "ticker": "fred",
+                                        "currency": "USD",
+                                        "par": 12000,
+                                        "maturity": 120,
+                                        "issuer": "resource:org.example.commercialpaper.Company#AMI",
+                                        "issueDate": "2018-05-31T14:52:41.211Z"
+                                    },
+                                    "owner": "resource:org.example.commercialpaper.Company#AMI",
+                                    "owningAccount": "resource:org.example.commercialpaper.Account#AMI-ISSUED-USD"
+                                },
+                                {
+                                    "$class": "org.example.commercialpaper.PaperOwnership",
+                                    "ID": "AMI#39e1ff70-64e9-11e8-b39f-bbcadfde822f#0",
+                                    "paper": {
+                                        "$class": "org.example.commercialpaper.CommercialPaper",
+                                        "CUSIP": "39e1ff70-64e9-11e8-b39f-bbcadfde822f#0",
+                                        "ticker": "fred",
+                                        "currency": "USD",
+                                        "par": 120000,
+                                        "maturity": 120,
+                                        "issuer": "resource:org.example.commercialpaper.Company#AMI",
+                                        "issueDate": "2018-05-31T15:42:29.608Z"
+                                    },
+                                    "owner": "resource:org.example.commercialpaper.Company#AMI",
+                                    "owningAccount": "resource:org.example.commercialpaper.Account#AMI-ISSUED-USD"
+                                }
+                            ]
+                        }
+                    },
+                    "issueDate": "2018-05-31T14:37:24.188Z"
+                },
+                "owner": {
+                    "$class": "org.example.commercialpaper.Company",
+                    "symbol": "AMI",
+                    "name": "Ampretia Industries Inc.",
+                    "paperTradingAccounts": [],
+                    "issuedPaperAccount": {
+                        "$class": "org.example.commercialpaper.Account",
+                        "ID": "AMI-ISSUED-USD",
+                        "summary": "US Trading account 1",
+                        "name": "USD-001-ISSUED",
+                        "workingCurrency": "USD",
+                        "cashBalance": 0,
+                        "assets": [
+                            "resource:org.example.commercialpaper.PaperOwnership#AMI%23221232b0-64e0-11e8-b627-35b341dd9f2a%230",
+                            {
+                                "$class": "org.example.commercialpaper.PaperOwnership",
+                                "ID": "AMI#44a8f4b0-64e2-11e8-8b81-e18d7946a4ee#0",
+                                "paper": {
+                                    "$class": "org.example.commercialpaper.CommercialPaper",
+                                    "CUSIP": "44a8f4b0-64e2-11e8-8b81-e18d7946a4ee#0",
+                                    "ticker": "fred",
+                                    "currency": "USD",
+                                    "par": 12000,
+                                    "maturity": 120,
+                                    "issuer": "resource:org.example.commercialpaper.Company#AMI",
+                                    "issueDate": "2018-05-31T14:52:41.211Z"
+                                },
+                                "owner": "resource:org.example.commercialpaper.Company#AMI",
+                                "owningAccount": "resource:org.example.commercialpaper.Account#AMI-ISSUED-USD"
+                            },
+                            {
+                                "$class": "org.example.commercialpaper.PaperOwnership",
+                                "ID": "AMI#39e1ff70-64e9-11e8-b39f-bbcadfde822f#0",
+                                "paper": {
+                                    "$class": "org.example.commercialpaper.CommercialPaper",
+                                    "CUSIP": "39e1ff70-64e9-11e8-b39f-bbcadfde822f#0",
+                                    "ticker": "fred",
+                                    "currency": "USD",
+                                    "par": 120000,
+                                    "maturity": 120,
+                                    "issuer": "resource:org.example.commercialpaper.Company#AMI",
+                                    "issueDate": "2018-05-31T15:42:29.608Z"
+                                },
+                                "owner": "resource:org.example.commercialpaper.Company#AMI",
+                                "owningAccount": "resource:org.example.commercialpaper.Account#AMI-ISSUED-USD"
+                            }
+                        ]
+                    }
+                },
+                "owningAccount": {
+                    "$class": "org.example.commercialpaper.Account",
+                    "ID": "AMI-ISSUED-USD",
+                    "summary": "US Trading account 1",
+                    "name": "USD-001-ISSUED",
+                    "workingCurrency": "USD",
+                    "cashBalance": 0,
+                    "assets": [
+                        "resource:org.example.commercialpaper.PaperOwnership#AMI%23221232b0-64e0-11e8-b627-35b341dd9f2a%230",
+                        {
+                            "$class": "org.example.commercialpaper.PaperOwnership",
+                            "ID": "AMI#44a8f4b0-64e2-11e8-8b81-e18d7946a4ee#0",
+                            "paper": {
+                                "$class": "org.example.commercialpaper.CommercialPaper",
+                                "CUSIP": "44a8f4b0-64e2-11e8-8b81-e18d7946a4ee#0",
+                                "ticker": "fred",
+                                "currency": "USD",
+                                "par": 12000,
+                                "maturity": 120,
+                                "issuer": {
+                                    "$class": "org.example.commercialpaper.Company",
+                                    "symbol": "AMI",
+                                    "name": "Ampretia Industries Inc.",
+                                    "paperTradingAccounts": [],
+                                    "issuedPaperAccount": "resource:org.example.commercialpaper.Account#AMI-ISSUED-USD"
+                                },
+                                "issueDate": "2018-05-31T14:52:41.211Z"
+                            },
+                            "owner": {
+                                "$class": "org.example.commercialpaper.Company",
+                                "symbol": "AMI",
+                                "name": "Ampretia Industries Inc.",
+                                "paperTradingAccounts": [],
+                                "issuedPaperAccount": "resource:org.example.commercialpaper.Account#AMI-ISSUED-USD"
+                            },
+                            "owningAccount": "resource:org.example.commercialpaper.Account#AMI-ISSUED-USD"
+                        },
+                        {
+                            "$class": "org.example.commercialpaper.PaperOwnership",
+                            "ID": "AMI#39e1ff70-64e9-11e8-b39f-bbcadfde822f#0",
+                            "paper": {
+                                "$class": "org.example.commercialpaper.CommercialPaper",
+                                "CUSIP": "39e1ff70-64e9-11e8-b39f-bbcadfde822f#0",
+                                "ticker": "fred",
+                                "currency": "USD",
+                                "par": 120000,
+                                "maturity": 120,
+                                "issuer": {
+                                    "$class": "org.example.commercialpaper.Company",
+                                    "symbol": "AMI",
+                                    "name": "Ampretia Industries Inc.",
+                                    "paperTradingAccounts": [],
+                                    "issuedPaperAccount": "resource:org.example.commercialpaper.Account#AMI-ISSUED-USD"
+                                },
+                                "issueDate": "2018-05-31T15:42:29.608Z"
+                            },
+                            "owner": {
+                                "$class": "org.example.commercialpaper.Company",
+                                "symbol": "AMI",
+                                "name": "Ampretia Industries Inc.",
+                                "paperTradingAccounts": [],
+                                "issuedPaperAccount": "resource:org.example.commercialpaper.Account#AMI-ISSUED-USD"
+                            },
+                            "owningAccount": "resource:org.example.commercialpaper.Account#AMI-ISSUED-USD"
+                        }
+                    ]
+                }
+            },
+            "discount": 3.5
+        },
+        {
+            "$class": "org.example.commercialpaper.PaperListing",
+            "ID": "US_BLUE_ONE=44a8f4b0-64e2-11e8-8b81-e18d7946a4ee#0",
+            "paperOwnership": {
+                "$class": "org.example.commercialpaper.PaperOwnership",
+                "ID": "AMI#44a8f4b0-64e2-11e8-8b81-e18d7946a4ee#0",
+                "paper": {
+                    "$class": "org.example.commercialpaper.CommercialPaper",
+                    "CUSIP": "44a8f4b0-64e2-11e8-8b81-e18d7946a4ee#0",
+                    "ticker": "fred",
+                    "currency": "USD",
+                    "par": 12000,
+                    "maturity": 120,
+                    "issuer": {
+                        "$class": "org.example.commercialpaper.Company",
+                        "symbol": "AMI",
+                        "name": "Ampretia Industries Inc.",
+                        "paperTradingAccounts": [],
+                        "issuedPaperAccount": {
+                            "$class": "org.example.commercialpaper.Account",
+                            "ID": "AMI-ISSUED-USD",
+                            "summary": "US Trading account 1",
+                            "name": "USD-001-ISSUED",
+                            "workingCurrency": "USD",
+                            "cashBalance": 0,
+                            "assets": [
+                                {
+                                    "$class": "org.example.commercialpaper.PaperOwnership",
+                                    "ID": "AMI#221232b0-64e0-11e8-b627-35b341dd9f2a#0",
+                                    "paper": {
+                                        "$class": "org.example.commercialpaper.CommercialPaper",
+                                        "CUSIP": "221232b0-64e0-11e8-b627-35b341dd9f2a#0",
+                                        "ticker": "fred",
+                                        "currency": "USD",
+                                        "par": 120000,
+                                        "maturity": 120,
+                                        "issuer": "resource:org.example.commercialpaper.Company#AMI",
+                                        "issueDate": "2018-05-31T14:37:24.188Z"
+                                    },
+                                    "owner": "resource:org.example.commercialpaper.Company#AMI",
+                                    "owningAccount": "resource:org.example.commercialpaper.Account#AMI-ISSUED-USD"
+                                }"resource:org.example.commercialpaper.PaperOwnership#AMI%2344a8f4b0-64e2-11e8-8b81-e18d7946a4ee%230",
+                                {
+                                    "$class": "org.example.commercialpaper.PaperOwnership",
+                                    "ID": "AMI#39e1ff70-64e9-11e8-b39f-bbcadfde822f#0",
+                                    "paper": {
+                                        "$class": "org.example.commercialpaper.CommercialPaper",
+                                        "CUSIP": "39e1ff70-64e9-11e8-b39f-bbcadfde822f#0",
+                                        "ticker": "fred",
+                                        "currency": "USD",
+                                        "par": 120000,
+                                        "maturity": 120,
+                                        "issuer": "resource:org.example.commercialpaper.Company#AMI",
+                                        "issueDate": "2018-05-31T15:42:29.608Z"
+                                    },
+                                    "owner": "resource:org.example.commercialpaper.Company#AMI",
+                                    "owningAccount": "resource:org.example.commercialpaper.Account#AMI-ISSUED-USD"
+                                }
+                            ]
+                        }
+                    },
+                    "issueDate": "2018-05-31T14:52:41.211Z"
+                },
+                "owner": {
+                    "$class": "org.example.commercialpaper.Company",
+                    "symbol": "AMI",
+                    "name": "Ampretia Industries Inc.",
+                    "paperTradingAccounts": [],
+                    "issuedPaperAccount": {
+                        "$class": "org.example.commercialpaper.Account",
+                        "ID": "AMI-ISSUED-USD",
+                        "summary": "US Trading account 1",
+                        "name": "USD-001-ISSUED",
+                        "workingCurrency": "USD",
+                        "cashBalance": 0,
+                        "assets": [
+                            {
+                                "$class": "org.example.commercialpaper.PaperOwnership",
+                                "ID": "AMI#221232b0-64e0-11e8-b627-35b341dd9f2a#0",
+                                "paper": {
+                                    "$class": "org.example.commercialpaper.CommercialPaper",
+                                    "CUSIP": "221232b0-64e0-11e8-b627-35b341dd9f2a#0",
+                                    "ticker": "fred",
+                                    "currency": "USD",
+                                    "par": 120000,
+                                    "maturity": 120,
+                                    "issuer": "resource:org.example.commercialpaper.Company#AMI",
+                                    "issueDate": "2018-05-31T14:37:24.188Z"
+                                },
+                                "owner": "resource:org.example.commercialpaper.Company#AMI",
+                                "owningAccount": "resource:org.example.commercialpaper.Account#AMI-ISSUED-USD"
+                            }"resource:org.example.commercialpaper.PaperOwnership#AMI%2344a8f4b0-64e2-11e8-8b81-e18d7946a4ee%230",
+                            {
+                                "$class": "org.example.commercialpaper.PaperOwnership",
+                                "ID": "AMI#39e1ff70-64e9-11e8-b39f-bbcadfde822f#0",
+                                "paper": {
+                                    "$class": "org.example.commercialpaper.CommercialPaper",
+                                    "CUSIP": "39e1ff70-64e9-11e8-b39f-bbcadfde822f#0",
+                                    "ticker": "fred",
+                                    "currency": "USD",
+                                    "par": 120000,
+                                    "maturity": 120,
+                                    "issuer": "resource:org.example.commercialpaper.Company#AMI",
+                                    "issueDate": "2018-05-31T15:42:29.608Z"
+                                },
+                                "owner": "resource:org.example.commercialpaper.Company#AMI",
+                                "owningAccount": "resource:org.example.commercialpaper.Account#AMI-ISSUED-USD"
+                            }
+                        ]
+                    }
+                },
+                "owningAccount": {
+                    "$class": "org.example.commercialpaper.Account",
+                    "ID": "AMI-ISSUED-USD",
+                    "summary": "US Trading account 1",
+                    "name": "USD-001-ISSUED",
+                    "workingCurrency": "USD",
+                    "cashBalance": 0,
+                    "assets": [
+                        {
+                            "$class": "org.example.commercialpaper.PaperOwnership",
+                            "ID": "AMI#221232b0-64e0-11e8-b627-35b341dd9f2a#0",
+                            "paper": {
+                                "$class": "org.example.commercialpaper.CommercialPaper",
+                                "CUSIP": "221232b0-64e0-11e8-b627-35b341dd9f2a#0",
+                                "ticker": "fred",
+                                "currency": "USD",
+                                "par": 120000,
+                                "maturity": 120,
+                                "issuer": {
+                                    "$class": "org.example.commercialpaper.Company",
+                                    "symbol": "AMI",
+                                    "name": "Ampretia Industries Inc.",
+                                    "paperTradingAccounts": [],
+                                    "issuedPaperAccount": "resource:org.example.commercialpaper.Account#AMI-ISSUED-USD"
+                                },
+                                "issueDate": "2018-05-31T14:37:24.188Z"
+                            },
+                            "owner": {
+                                "$class": "org.example.commercialpaper.Company",
+                                "symbol": "AMI",
+                                "name": "Ampretia Industries Inc.",
+                                "paperTradingAccounts": [],
+                                "issuedPaperAccount": "resource:org.example.commercialpaper.Account#AMI-ISSUED-USD"
+                            },
+                            "owningAccount": "resource:org.example.commercialpaper.Account#AMI-ISSUED-USD"
+                        }"resource:org.example.commercialpaper.PaperOwnership#AMI%2344a8f4b0-64e2-11e8-8b81-e18d7946a4ee%230",
+                        {
+                            "$class": "org.example.commercialpaper.PaperOwnership",
+                            "ID": "AMI#39e1ff70-64e9-11e8-b39f-bbcadfde822f#0",
+                            "paper": {
+                                "$class": "org.example.commercialpaper.CommercialPaper",
+                                "CUSIP": "39e1ff70-64e9-11e8-b39f-bbcadfde822f#0",
+                                "ticker": "fred",
+                                "currency": "USD",
+                                "par": 120000,
+                                "maturity": 120,
+                                "issuer": {
+                                    "$class": "org.example.commercialpaper.Company",
+                                    "symbol": "AMI",
+                                    "name": "Ampretia Industries Inc.",
+                                    "paperTradingAccounts": [],
+                                    "issuedPaperAccount": "resource:org.example.commercialpaper.Account#AMI-ISSUED-USD"
+                                },
+                                "issueDate": "2018-05-31T15:42:29.608Z"
+                            },
+                            "owner": {
+                                "$class": "org.example.commercialpaper.Company",
+                                "symbol": "AMI",
+                                "name": "Ampretia Industries Inc.",
+                                "paperTradingAccounts": [],
+                                "issuedPaperAccount": "resource:org.example.commercialpaper.Account#AMI-ISSUED-USD"
+                            },
+                            "owningAccount": "resource:org.example.commercialpaper.Account#AMI-ISSUED-USD"
+                        }
+                    ]
+                }
+            },
+            "discount": 3.5
+        },
+        "resource:org.example.commercialpaper.PaperListing#US_BLUE_ONE=39e1ff70-64e9-11e8-b39f-bbcadfde822f%230"
+    ],
+    "maxMaturityTime": 270
+}

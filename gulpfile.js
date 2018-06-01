@@ -25,7 +25,9 @@ const rp = require('request-promise');
 
 
 const localScriptDir = path.join(__dirname,'.localtoolchain');
-const cyclelocalfabric_sh = path.resolve(localScriptDir,'cycle-local-fabric.sh');
+const card_sh = path.resolve(__dirname,'ledgers','hyperledger-fabric','createPeerAdminCard.sh');
+const provisionFabric_sh = path.resolve(__dirname,'ledgers','hyperledger-fabric','startFabric.sh');
+
 const startnetwork_sh = path.resolve(localScriptDir,'start-network.sh');
 const upgradenetwork_sh = path.resolve(localScriptDir,'upgrade-network.sh');
 const bootstrap_sh = path.resolve('.','contracts','commercial-paper-network','bootstrap.sh');
@@ -85,13 +87,17 @@ gulp.task('default', ['help']);
  * Starts a local docker-compose based Fabric based on the current set of tools.
  * This will stop and remove any currently running local Fabric configuration.
  *
- * @task {provision}
+ * @task {fabric:provision}
  */
-gulp.task('provision', ()=>{
-    let fn = run([cyclelocalfabric_sh]);
+gulp.task('fabric:provision', ()=>{
+    let fn = run([provisionFabric_sh]);
     return fn();
-} );
+});
 
+gulp.task('fabric:card', ()=>{
+    let fn = run([card_sh]);
+    return fn();
+});
 
 /**
  * Does the initial installation and start of the business network
@@ -215,3 +221,28 @@ gulp.task('env', ()=>{
     }
     console.log('\n');
 });
+
+
+gulp.task('paper-trading-webui:build',()=>{
+    let fn = run(['npm run build --prefix ./apps/paper-trading-webui']);
+    return fn().then(()=>{
+    	console.log('>>  App running at http://localhost:3000/login ');
+    });
+})
+
+
+/**
+ * 
+ * 
+ * 
+ */
+
+gulp.task('cardstore:fs',()=>{
+
+    let storePath = path.resolve(__dirname,'_local-cardstore');
+    let localstore=`{ "composer": { "wallet": { "type": "composer-wallet-filesystem", "options": { "storePath": "${storePath}" } } } }`;
+
+    console.log(localstore);
+
+
+})

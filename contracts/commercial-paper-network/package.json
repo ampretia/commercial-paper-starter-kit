@@ -1,6 +1,6 @@
 {
   "name": "commercial-paper-network",
-  "version": "0.0.64",
+  "version": "0.0.72",
   "description": "Business Network for Commercial Paper Trading",
   "scripts": {
     "dist": "mkdirp ./dist && composer archive create --sourceType dir --sourceName . -a ./dist/commercial-paper-network.bna",
@@ -19,9 +19,7 @@
     "eslint": "latest",
     "nyc": "latest",
     "mkdirp": "latest",
-    "mocha": "latest"
-  },
-  "dependencies": {
-    "composer-cli": "^0.19.5"
+    "mocha": "latest",
+    "composer-cli": "latest"
   }
 }
