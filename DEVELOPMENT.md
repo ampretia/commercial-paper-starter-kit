@@ -1,31 +1,40 @@
-#
+# 'From soup to nuts'
+## Stage 2 - Local Development
 
-`npm run` standard scripts
+Everything is local within your machine; but using development versions of the real servers.
 
-- `npm install`
-- `npm test`
-- `npm start`  -- runs the application locally
-- `npm run build:dev` -- developer build, including live reload if available
-- `npm run build:prod` -- production build ahead of publishing
-- `npm run deploy` -- deploy to primary destination
+### Setup
 
-# Initial Setup
+1. *Network*
+We'll be running all the tools within docker containers, they all need to communicate so it has found
+to be easier if we create a network ahead of time; in the docker-compose files we'll lock the services to defined
+ip address, therefore create a newtork with a defined gateway
 
-docker network create cp-network
-
-- Choose the card store to use for the Fabric Ledger
-  - Local filesystem
 ```
-$ export NODE_CONFIG=$(gulp --silent cardstore:fs)
-```
-  - REDIS
+$ docker network create cp-stack-network --gateway 
+                    "Subnet": "172.25.0.0/16",
+                    "Gateway": "172.25.0.1"
 
-- Start up the Fabric
+```
+
+2. Hyperledger Composer Card Store
+We need to chose a location to store the Composer Network Cards - these are the ids that are used to connect apps to the blockchain. 
+Local filesystem is good for testing. Later on we'll migrate this to other solutions. 
+
+All composer applications, and CLIs will pick up the location of the card store from the NODE_CONFIG environment variable
+
+```
+$ export NODE_CONFIG=$(gulp cardstore:fs --silent)
+```
+  
+3. Hyperledger Fabric
+We need a blockchain - therefore we need to start up a Hyperledger Fabric instance
 
 ```
 $ gulp fabric:start
+$ gulp fabric:card
 ```
-  - that will create the PeerAdmin card in the wallet as specified by node config - spot the name of the card it prints out for 'PeerAdmin'
+That will create the PeerAdmin card in the wallet as specified by node config - spot the name of the card it prints out for 'PeerAdmin'
 
 Need to deploy the smart contract to Fabric; depending on the fabric deployment (simulated, local or cloud) the initialy created
 card that has power to deploy networks will have different names - so that other scripts can handle this correctly set a local varaible.
@@ -33,9 +42,8 @@ If using docker compose need to be careful about the hostnames of the cards. Wou
 and will work locally, giving a false sense of security. Deployment then goes a bit wrong. 
 
 ```
-$ export FABRIC_LEDGER_CARD=<name>
+$ export BLOCKCHAIN_NETWORK_CARD=PeerAdmin@hlfv1
 $ export HL_COMPOSER_CLI=$(npm bin)/composer
-
 ```
 
 We need to do the initial deploy, and then bootstrap data into it
@@ -45,29 +53,47 @@ $ gulp contract:deploy
 $ gulp contract:bootstrap
 ```
 
+We now have data within the ledger; the Composer CLI is available, so lets look at the network cards that we have in place. 
+
+```
+$ npx composer card list
+The following Business Network Cards are available:
+
+Connection Profile: hlfv1
+┌────────────────────────────────┬───────────┬──────────────────────────┐
+│ Card Name                      │ UserId    │ Business Network         │
+├────────────────────────────────┼───────────┼──────────────────────────┤
+│ AAI@local                      │ AAI       │ commercial-paper-network │
+├────────────────────────────────┼───────────┼──────────────────────────┤
+│ BAH@local                      │ BAH       │ commercial-paper-network │
+├────────────────────────────────┼───────────┼──────────────────────────┤
+│ AMI@local                      │ AMI       │ commercial-paper-network │
+├────────────────────────────────┼───────────┼──────────────────────────┤
+│ admin@commercial-paper-network │ admin     │ commercial-paper-network │
+├────────────────────────────────┼───────────┼──────────────────────────┤
+│ PeerAdmin@hlfv1                │ PeerAdmin │                          │
+└────────────────────────────────┴───────────┴──────────────────────────┘
+
+
+Issue composer card list --card <Card Name> to get details a specific card
+
+Command succeeded
+
+```
+
+### Useful commands
+
+To reset all the data within the network - i.e. bring it back to the state after it was started
+```
 npx composer network reset --card admin@commercial-paper-network
+```
 
-We now have the Fabric setup with the Smart Contract. Now we need an application setup to use iet. 
-
-Can bring them all up via docker-compose script. 
-
-
-
-## contracts
-This has a single smart contract in the form of a Composer Business Network.
-
-`npm install` - purely for the setup
-`npm test`
-`npm run build:dev` && `npm run build:prod` synonymous - and package up the BNA with an autoincrement of versions
-`npm run deploy` will do the start and install of the network - requries the peeradmin (or equivalant card), and defined cardstore as
-NODE_CONFIG
-
-## apps
-
-### commerical-financing-webui
+To remind my self the setup that we have 
+```
+gulp env
+```
 
 
-### paper-trading-webui
 
-Audience: for traders in commerical paper
+
 

@@ -47,7 +47,7 @@ const LOG = winston.loggers.get('app');
 async function showMarket(userCardName){
     try {
 
-        console.log(boxen(chalk.blue.bold('Commerical Paper Trading - Markets'),{padding:1,margin:1}));
+        console.log(chalk.blue.bold('Commerical Paper Trading - Markets'));
 
 
         // let table = new Table();

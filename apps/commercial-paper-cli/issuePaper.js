@@ -1,6 +1,4 @@
 'use strict';
-
-
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -131,13 +129,6 @@ async function submitTx(userCardName,answers){
     }
 
 }
-
-// let cardname = process.env.CP_COMPANY;
-// if (!cardname){
-//     console.log('need CP_COMPANY set to something');
-//     process.exit(1);
-// }
-
 
 module.exports.submit = submitTx;
 module.exports.questions = questions;

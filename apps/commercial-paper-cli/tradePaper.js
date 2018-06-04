@@ -1,6 +1,4 @@
 'use strict';
-
-
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,41 +39,30 @@ winston.loggers.add('app', {
 });
 
 const LOG = winston.loggers.get('app');
+const questions = [
+    {
+        name: 'marketId',
+        type: 'input',
+        message: 'Enter ID of the Market this paper is listed in'
+    },
+    {
+        name: 'paperListingId',
+        type: 'input',
+        message: 'Enter "ID" name of the paper to purchase'
+    },
+    {
+        name: 'accountId',
+        type: 'input',
+        message: 'Enter the ID of the account to use for purchase'
+    }
 
-/**
- *
- */
-async function getInput(){
-
-
-    let questions = [
-        {
-            name: 'marketId',
-            type: 'input',
-            message: 'Enter ID of the Market this paper is listed in'
-        },
-        {
-            name: 'paperListingId',
-            type: 'input',
-            message: 'Enter "ID" name of the paper to purchase'
-        },
-        {
-            name: 'accountId',
-            type: 'input',
-            message: 'Enter the ID of the account to use for purchase'
-        }
-
-    ];
-    let answers = await inquirer.prompt(questions);
-    return answers;
-
-}
+];
 
 /**
  * Main Function
  * @param {String} cardName userCardName
  */
-async function submitTx(userCardName){
+async function submitTx(userCardName,answers){
     try {
 
         // let table = new Table();
@@ -86,7 +73,9 @@ async function submitTx(userCardName){
 
 
         console.log(boxen(chalk.blue.bold('Commerical Paper Trading - Paper Trading'),{padding:1,margin:1}));
-        let answers = await getInput();
+        if (!answers){
+            answers = await inquirer.prompt(questions);
+        }
         let factory = businessNetworkDefinition.getFactory();
 
 
@@ -105,3 +94,6 @@ async function submitTx(userCardName){
     }
 
 }
+
+module.exports.submit = submitTx;
+module.exports.questions = questions;

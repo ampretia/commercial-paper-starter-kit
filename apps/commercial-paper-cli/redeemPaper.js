@@ -41,30 +41,20 @@ winston.loggers.add('app', {
 });
 
 const LOG = winston.loggers.get('app');
+const questions = [
+    {
+        name: 'accountId',
+        type: 'input',
+        message: 'Enter ID of the account this paper is held in'
+    },
+    {
+        name: 'paperId',
+        type: 'input',
+        message: 'Enter "ID" name of the paper to redeem'
+    }
 
-/**
- *
- */
-async function getInput(){
+];
 
-
-    let questions = [
-        {
-            name: 'accountId',
-            type: 'input',
-            message: 'Enter ID of the account this paper is held in'
-        },
-        {
-            name: 'paperId',
-            type: 'input',
-            message: 'Enter "ID" name of the paper to redeem'
-        }
-
-    ];
-    let answers = await inquirer.prompt(questions);
-    return answers;
-
-}
 
 /**
  * Main Function
@@ -80,8 +70,10 @@ async function submitTx(userCardName){
         serializer = businessNetworkDefinition.getSerializer();
 
 
-        console.log(boxen(chalk.blue.bold('Commerical Paper Trading - Paper Redeem'),{padding:1,margin:1}));
-        let answers = await getInput();
+        console.log(chalk.blue.bold('Commerical Paper Trading - Paper Redeem'));
+        if (!answers){
+            answers = await inquirer.prompt(questions);
+        }
         let factory = businessNetworkDefinition.getFactory();
 
         let accountRegistry = await businessNetworkConnection.getRegistry(`${ns}.Account`);
@@ -110,3 +102,6 @@ async function submitTx(userCardName){
     }
 
 }
+
+module.exports.submit = submitTx;
+module.exports.questions = questions;
