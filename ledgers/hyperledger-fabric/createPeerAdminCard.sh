@@ -75,7 +75,7 @@ else
     exit 1
 fi
 
-cat << EOF > DevServer_connection.json
+cat << EOF > /tmp/DevServer_connection.json
 {
     "name": "hlfv1",
     "x-type": "hlfv1",
@@ -144,7 +144,7 @@ else
     CARDOUTPUT=PeerAdmin@hlfv1.card
 fi
 
-"${HL_COMPOSER_CLI}"  card create -p DevServer_connection.json -u PeerAdmin -c "${CERT}" -k "${PRIVATE_KEY}" -r PeerAdmin -r ChannelAdmin --file $CARDOUTPUT
+"${HL_COMPOSER_CLI}"  card create -p /tmp/DevServer_connection.json -u PeerAdmin -c "${CERT}" -k "${PRIVATE_KEY}" -r PeerAdmin -r ChannelAdmin --file $CARDOUTPUT
 
 if [ "${NOIMPORT}" != "true" ]; then
     if "${HL_COMPOSER_CLI}"  card list -c PeerAdmin@hlfv1 > /dev/null; then
@@ -153,7 +153,7 @@ if [ "${NOIMPORT}" != "true" ]; then
 
     "${HL_COMPOSER_CLI}"  card import --file /tmp/PeerAdmin@hlfv1.card 
     "${HL_COMPOSER_CLI}"  card list
-    echo "Hyperledger Composer PeerAdmin card has been imported, host of fabric specified as '${HOST}'"
+    echo "Hyperledger Composer PeerAdmin card has been imported."
     rm /tmp/PeerAdmin@hlfv1.card
 else
     echo "Hyperledger Composer PeerAdmin card has been created, host of fabric specified as '${HOST}'"

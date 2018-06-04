@@ -22,7 +22,7 @@ const path= require('path');
 const jsome = require('jsome');
 const chalk = require('chalk');
 const rp = require('request-promise');
-
+const boxen = require('boxen');
 
 const localScriptDir = path.join(__dirname,'.localtoolchain');
 const card_sh = path.resolve(__dirname,'ledgers','hyperledger-fabric','createPeerAdminCard.sh');
@@ -202,9 +202,9 @@ gulp.task('didmanager', ()=>{
     });
 } );
 
-/**
- * runs the Trade Application to trade Commercial Paper
- *
+/*"
+ *" to trade Commercial Paper
+ *"
  * @task {tradeapp}
  */
 gulp.task('tradeapp', ()=>{
@@ -254,9 +254,9 @@ gulp.task('paper-trading-webui:build',()=>{
     });
 })
 
-gulp.task('hello',()=>{
+gulp.task('welcome',['help'],()=>{
 	// console.log(process.env);
-	console.log(args);
+    console.log(boxen(chalk.blue.bold('Welcome - Commerical Paper Trading'),{padding:1,margin:1}));
 });
 
 /**
@@ -266,7 +266,7 @@ gulp.task('hello',()=>{
  */
 gulp.task('cardstore:fs',()=>{
 
-    let storePath = path.resolve(__dirname,'_local-cardstore');
+    let storePath = path.resolve(__dirname,'_localstore');
     let localstore=`{ "composer": { "wallet": { "type": "composer-wallet-filesystem", "options": { "storePath": "${storePath}" } } } }`;
 
     console.log(localstore);

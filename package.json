@@ -17,7 +17,7 @@
     "fintech"
   ],
   "scripts": {
-    "postinstall": "gulp hello",
+    "postinstall": "gulp welcome --silent",
     "monitor": "./.localtoolchain/monitordocker.sh"
   },
   "devDependencies": {
@@ -31,6 +31,7 @@
     "request-promise": "^4.2.2"
   },
   "dependencies": {
+    "boxen": "^1.3.0",
     "eslint": "^4.19.1"
   },
   "bugs": {

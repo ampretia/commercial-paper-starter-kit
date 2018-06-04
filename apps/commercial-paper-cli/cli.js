@@ -22,7 +22,7 @@ const redeem = require('./redeemPaper');
 const trade = require('./tradePaper');
 const market = require('./market');
 const chalk = require('chalk');
-const boxen = require('boxen')
+const boxen = require('boxen');
 
 // setup read line and the default prompt
 const readline = require('readline');
@@ -59,7 +59,7 @@ Use the commands {bold 'issue' 'company' 'market' 'trace' 'redeem'} to interact 
 Each command asks questions to guide you. 
 
 To finish 'quit' 'exit' or ctrl-d
-`
+`;
 
 /**
  *
@@ -81,79 +81,79 @@ async function main() {
         }
         cmd = cmd[1];
         switch (cmd) {
-            case 'card': {
-                // simply get the card name that has been entered, and update prompt and store
-                let input = trimedLine.match(card_re);
-                if (!input || input.length === 0) {
-                    console.log('${input} Syntax should be  card <cardname>');
-                } else {
-                    cardName = input[1];
-                    rl.setPrompt(chalk`{bold CP [${cardName}] }> `);
-                    console.log(`Using the card ${cardName}`);
-                }
+        case 'card': {
+            // simply get the card name that has been entered, and update prompt and store
+            let input = trimedLine.match(card_re);
+            if (!input || input.length === 0) {
+                console.log('${input} Syntax should be  card <cardname>');
+            } else {
+                cardName = input[1];
+                rl.setPrompt(chalk`{bold CP [${cardName}] }> `);
+                console.log(`Using the card ${cardName}`);
+            }
 
-                break;
+            break;
+        }
+        case 'company': {
+            if (!cardName) {
+                console.log('Please use the card command to set the network card to use');
+            } else {
+                console.log(`Company listing for ${cardName}`);
+                await company.submit(cardName);
             }
-            case 'company': {
-                if (!cardName) {
-                    console.log('Please use the card command to set the network card to use');
-                } else {
-                    console.log(`Company listing for ${cardName}`);
-                    await company.submit(cardName);
-                }
-                break;
+            break;
+        }
+        case 'market': {
+            if (!cardName) {
+                console.log('Please use the card command to set the network card to use');
+            } else {
+                let data = await askQuestions(market.questions);
+                await market.submit(cardName, data);
             }
-            case 'market': {
-                if (!cardName) {
-                    console.log('Please use the card command to set the network card to use');
-                } else {
-                    let data = await askQuestions(market.questions);
-                    await market.submit(cardName, data);
-                }
-                break;
+            break;
+        }
+        case 'issue': {
+            if (!cardName) {
+                console.log('Please use the card command to set the network card to use');
+            } else {
+                let data = await askQuestions(issue.questions);
+                await issue.submit(cardName, data);
             }
-            case 'issue': {
-                if (!cardName) {
-                    console.log('Please use the card command to set the network card to use');
-                } else {
-                    let data = await askQuestions(issue.questions);
-                    await issue.submit(cardName, data);
-                }
 
-                break;
+            break;
+        }
+        case 'trade': {
+            if (!cardName) {
+                console.log('Please use the card command to set the network card to use');
+            } else {
+                let data = await askQuestions(trade.questions);
+                await trade.submit(cardName, data);
             }
-            case 'trade': {
-                if (!cardName) {
-                    console.log('Please use the card command to set the network card to use');
-                } else {
-                    let data = await askQuestions(trade.questions);
-                    await trade.submit(cardName, data);
-                }
 
-                break;
+            break;
+        }
+        case 'redeem': {
+            if (!cardName) {
+                console.log('Please use the card command to set the network card to use');
+            } else {
+                let data = await askQuestions(redeem.questions);
+                await issue.submit(redeem, data);
             }
-            case 'redeem': {
-                if (!cardName) {
-                    console.log('Please use the card command to set the network card to use');
-                } else {
-                    let data = await askQuestions(redeem.questions);
-                    await issue.submit(redeem, data);
-                }
 
-                break;
-            }
-            case 'exit':
-            case 'end':
-            case 'q':
-            case 'x':
-            case 'quit': {
-                rl.close();
-                break;
-            }
-               
-            default:
-                console.log(`Say what? I might have heard '${line.trim()}'`);
-                break;
+            break;
+        }
+        case 'exit':
+        case 'end':
+        case 'q':
+        case 'x':
+        case 'quit': {
+            rl.close();
+            break;
+        }
+
+        default:
+            console.log(`Say what? I might have heard '${line.trim()}'`);
+            break;
         }
         console.log();
         rl.prompt();
@@ -166,4 +166,4 @@ async function main() {
 
 main().catch((err) => {
     console.log(err); process.exit(1);
-})
+});
