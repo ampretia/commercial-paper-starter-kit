@@ -1,0 +1,15 @@
+{
+    "couchdb": {
+      "IPv4Address": "172.25.0.3"
+    },
+    "ca.org1.example.com" :{
+      "IPv4Address": "172.25.0.4"
+    },
+    "orderer.example.com": {
+      "IPv4Address": "172.25.0.2"
+    },
+    "peer0.org1.example.com": {
+      "IPv4Address": "172.25.0.5"
+    }
+  }
+  

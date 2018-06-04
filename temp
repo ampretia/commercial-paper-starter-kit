@@ -1,6 +1,0 @@
-{
-  "$class": "org.example.commercialpaper.PurchasePaper",
-  "market": "resource:org.example.commercialpaper.Market#US_BLUE_ONE",
-  "listing": "resource:org.example.commercialpaper.PaperListing#US_BLUE_ONE=aaaaaaaa#0",
-  "account": "resource:org.example.commercialpaper.Account#BAH-USD-001"
-}

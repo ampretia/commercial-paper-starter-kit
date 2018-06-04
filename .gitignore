@@ -52,4 +52,5 @@ chaincode/pkg
 .vscode
 
 *.card
-_local
+_local*
+
