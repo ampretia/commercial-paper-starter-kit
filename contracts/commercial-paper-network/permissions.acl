@@ -15,28 +15,162 @@
 /**
  * Sample access control list.
  */
-rule EverybodyCanReadEverything {
-    description: "Allow all participants read access to all resources"
-    participant: "org.example.commercialpaper.Company"
-    operation: READ
-    resource: "org.example.commercialpaper.*"
-    action: ALLOW
+
+// rule EverybodyCanDoEverything {
+//     description: "Allow all participants to do whatever they want idec"
+//     participant: "org.example.commercialpaper.*"
+//     operation: ALL
+//     resource: "org.example.commercialpaper.*"
+//     action: ALLOW
+// }
+
+rule CompaniesUpdateSelves {
+	description: "Allow companies to update themselves"
+  	participant(p): "org.example.commercialpaper.Company"
+  	operation: UPDATE
+    resource(r): "org.example.commercialpaper.Company"
+  	condition: (p.getIdentifier() === r.getIdentifier())
+  	action: ALLOW
 }
 
-rule EverybodyCanSubmitTransactions {
-    description: "Allow all participants to submit transactions"
-    participant: "org.example.commercialpaper.Company"
-    operation: ALL
-    resource: "org.example.commercialpaper.*"
-    action: ALLOW
+rule CompaniesSeeEachOther {
+	description: "Allow all companies to see each other"
+  	participant: "org.example.commercialpaper.Company"
+  	operation: READ
+    resource: "org.example.commercialpaper.Company"
+  	action: ALLOW
 }
 
-rule EverybodyCanUpdate {
-    description: "Allow all participants to submit transactions"
-    participant: "org.example.commercialpaper.Company"
-    operation: UPDATE
-    resource: "org.example.commercialpaper.*"
-    action: ALLOW
+rule CompaniesSeeIssuedPapers {
+	description: "Allow companies to see commercial papers that they issued"
+  	participant(p): "org.example.commercialpaper.Company"
+  	operation: READ
+    resource(r): "org.example.commercialpaper.CommercialPaper"
+  	condition: (r.issuer.getIdentifier() === p.getIdentifier())
+  	action: ALLOW
+}
+
+rule CompaniesSeeOwnedPapers {
+	description: "Allow companies to see commercial papers that they own"
+  	participant(p): "org.example.commercialpaper.Company"
+  	operation: READ
+    resource(r): "org.example.commercialpaper.CommercialPaper"
+  	condition: (r.owner.getIdentifier() === p.getIdentifier())
+  	action: ALLOW
+}
+
+rule CompaniesSeeAndUpdateTradingAccounts {
+	description: "Allow companies to view and update the accounts they use to trade commercial papers"
+  	participant(p): "org.example.commercialpaper.Company"
+  	operation: READ, UPDATE
+    resource(r): "org.example.commercialpaper.Account"
+  	condition: (p.paperTradingAccounts.some(function (account) {
+      return account.getIdentifier() === r.getIdentifier();
+    }))
+  	action: ALLOW
+}
+
+rule CompaniesSeeAndUpateIssuingAccount {
+	description: "Allow companies to view and update the acount they use to issue commercial papers"
+  	participant(p): "org.example.commercialpaper.Company"
+  	operation: READ, UPDATE
+    resource(r): "org.example.commercialpaper.Account"
+  	condition: (p.issuedPaperAccount.getIdentifier() === r.getIdentifier())
+  	action: ALLOW
+}
+
+rule CompaniesSeeMarkets {
+	description: "Allow companies to see available Market assets"
+  	participant: "org.example.commercialpaper.Company"
+  	operation: READ
+    resource: "org.example.commercialpaper.Market"
+  	action: ALLOW
+}
+
+rule CompaniesSubmitCreateTx {
+	description: "Allow companies to submit a CreatePaper transaction"
+  	participant: "org.example.commercialpaper.Company"
+  	operation: CREATE
+    resource: "org.example.commercialpaper.CreatePaper"
+  	action: ALLOW
+}
+
+rule CompaniesCreateCommercialPapers {
+	description: "Allow companies to create a CommercialPaper asset"
+  	participant: "org.example.commercialpaper.Company"
+  	operation: CREATE
+    resource: "org.example.commercialpaper.CommercialPaper"
+  	transaction: "org.example.commercialpaper.CreatePaper"
+  	action: ALLOW
+}
+
+rule CompaniesSubmitListTx {
+	description: "Allow companies to submit a ListOnMarket transaction"
+  	participant: "org.example.commercialpaper.Company"
+  	operation: CREATE
+    resource: "org.example.commercialpaper.ListOnMarket"
+  	action: ALLOW
+}
+
+rule CompaniesUpdateMarketWhenListing {
+	description: "Allow companies to update a market with commercial papers"
+  	participant: "org.example.commercialpaper.Company"
+  	operation: UPDATE
+    resource: "org.example.commercialpaper.Market"
+  	transaction: "org.example.commercialpaper.ListOnMarket"
+  	action: ALLOW
+}
+
+rule CompaniesSubmitPurchaseTx {
+	description: "Allow companies to submit a PurchasePaper transaction"
+  	participant: "org.example.commercialpaper.Company"
+  	operation: CREATE
+    resource: "org.example.commercialpaper.PurchasePaper"
+  	action: ALLOW
+}
+
+rule CompaniesSeeAndUpdatePapersWhenPurchasing {
+	description: "Allow companies to view and update the commercial paper that they are purchasing"
+  	participant: "org.example.commercialpaper.Company"
+  	operation: READ, UPDATE
+  	resource: "org.example.commercialpaper.CommercialPaper"
+  	transaction: "org.example.commercialpaper.PurchasePaper"
+  	action: ALLOW
+}
+
+rule CompaniesSeeAndUpdateAccountWhenPurchasing {
+	description: "Allow companies to view and update all accounts when purchasing a commercial paper"
+  	participant: "org.example.commercialpaper.Company"
+  	operation: READ, UPDATE
+  	resource: "org.example.commercialpaper.Account"
+  	transaction: "org.example.commercialpaper.PurchasePaper"
+  	action: ALLOW
+}
+
+rule CompaniesUpdateMarketWhenPurchasing {
+	description: "Allow companies to update a market and remove purchased commercial paper listings"
+  	participant: "org.example.commercialpaper.Company"
+  	operation: UPDATE
+    resource: "org.example.commercialpaper.Market"
+  	transaction: "org.example.commercialpaper.PurchasePaper"
+  	action: ALLOW
+}
+
+rule CompaniesSubmitRedeemTx {
+	description: "Allow companies to submit a RedeemPaper transaction"
+  	participant: "org.example.commercialpaper.Company"
+  	operation: CREATE
+    resource: "org.example.commercialpaper.RedeemPaper"
+  	action: ALLOW
+}
+
+rule CompaniesSeeAndUpdateAccountsWhenRedeeming {
+	description: "Allow companies to see and update all accounts when redeeming a commercial paper"
+  	participant: "org.example.commercialpaper.Company"
+  	operation: READ, UPDATE
+  	resource: "org.example.commercialpaper.Account"
+  	transaction: "org.example.commercialpaper.RedeemPaper"
+  	action: ALLOW
 }
 
 rule SystemACL {

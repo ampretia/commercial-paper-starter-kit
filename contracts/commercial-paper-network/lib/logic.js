@@ -77,6 +77,7 @@ async function listOnMarket(tx) {  // eslint-disable-line no-unused-vars
     let market = tx.market;  
     // validation
     // market can accept the papers to be listed, currency correct etc etc.
+
     const marketRegistry = await getAssetRegistry(`${ns}.Market`);
     const companyRegistry = await getParticipantRegistry(`${ns}.Company`);
     
@@ -107,7 +108,7 @@ async function listOnMarket(tx) {  // eslint-disable-line no-unused-vars
 async function purchasePaper(tx) {  // eslint-disable-line no-unused-vars
 
     let market = tx.market;
-    let companyBuying = getCurrentParticipant();
+    let newOwner = getCurrentParticipant();
 
     const marketRegistry = await getAssetRegistry(`${ns}.Market`);
     const paperRegistry = await getAssetRegistry(`${ns}.CommercialPaper`);
@@ -122,21 +123,29 @@ async function purchasePaper(tx) {  // eslint-disable-line no-unused-vars
     });
     let paper = await paperRegistry.get(paperListing.paper.getIdentifier());
     let currentOwner = await companyRegistry.get(paperListing.currentOwner.getIdentifier());
-    
+    let currentAccount = await accountRegistry.get(paper.owningAccount.getIdentifier());
+    let newAccount = await accountRegistry.get(tx.account.getIdentifier());
+
+    // first check that the new account is valid and has enough money to purchase the paper
+    if (!newOwner.paperTradingAccounts.includes(tx.account)) {
+        throw new Error ("Account " + tx.account.getIdentifier() + " is not one of the paper trading accounts controlled by " + newOwner.name);
+    } else if (newAccount.cashBalance < (paper.par * (100-paperListing.discount) / 100)) {
+        throw new Error ("Not enough money is Account " + tx.account.getIdentifier() + " to purchase this commercial paper");
+    }
+
     // this is being purchased so we need to remove the PaperListing asset
-    market.papersForSale.pop(paperListing);
-    market.papersForSale = market.papersForSale.filter((e)=> {
-        return e.getIdentifier() !== tx.listingID;
+    market.papersForSale = market.papersForSale.filter((e) => {
+        return e.ID !== tx.listingID;
     });
     await marketRegistry.update(market);
 
     // make sure the previously owning company doesn't have it any more in their accounts
-    let currentAccount = await accountRegistry.get(paper.owningAccount.getIdentifier());
-    currentAccount.assets.pop(paperListing.paper);
-
+    currentAccount.assets = currentAccount.assets.filter((e) => {
+        return e.getIdentifier() !== paper.CUSIP;
+    });
+    
     // now need to get the account that this was purchased via and update that
-    let newAccount = await accountRegistry.get(tx.account.getIdentifier());
-    newAccount.assets.push(getFactory().newRelationship(ns, 'CommercialPaper', paperListing.paper.CUSIP));
+    newAccount.assets.push(getFactory().newRelationship(ns, 'CommercialPaper', paper.getIdentifier()));
 
     // money transfer
     let discountedValue = paper.par * (100-paperListing.discount) / 100;
@@ -150,7 +159,7 @@ async function purchasePaper(tx) {  // eslint-disable-line no-unused-vars
     await accountRegistry.update(newAccount);
 
     // update the owner of the commercial paper
-    paper.owner = companyBuying;
+    paper.owner = newOwner;
     paper.owningAccount = newAccount;
     await paperRegistry.update(paper);
 
