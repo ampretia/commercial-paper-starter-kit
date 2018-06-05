@@ -12,8 +12,8 @@
     "boxen": "^1.3.0",
     "chalk": "^2.4.1",
     "cli-table-redemption": "^1.0.1",
-    "composer-admin": "^0.19.7",
-    "composer-client": "^0.19.7",
+    "composer-admin": "unstable",
+    "composer-client": "unstable",
     "inquirer": "^5.2.0",
     "uuid": "^3.2.1"
   },

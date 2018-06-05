@@ -29,7 +29,7 @@ const card_sh = path.resolve(__dirname,'ledgers','hyperledger-fabric','createPee
 const provisionFabric_sh = path.resolve(__dirname,'ledgers','hyperledger-fabric','startFabric.sh');
 
 // const startnetwork_sh = path.resolve(localScriptDir,'start-network.sh');
-const contractdeploy_sh = path.resolve('.','contracts','contract-deploy.sh');
+const contractdeploy_sh = path.resolve(localScriptDir,'contract-deploy.sh');
 const bootstrap_sh = path.resolve('.','contracts','commercial-paper-network','bootstrap.sh');
 
 const startindy_sh = path.resolve('.','services','identity','startIndy.sh');
@@ -99,12 +99,12 @@ gulp.task('fabric:provision', ()=>{
 gulp.task('fabric:card', ()=>{
     let fn;
     // check what the target is for the deployment
-    if (args.target==="cloud"){
-      // need to use the blockchain.json file (assuming in the cwd) to get the card
-      fn = run([getCloudCard_sh]);  
+    if (args.target==='cloud'){
+        // need to use the blockchain.json file (assuming in the cwd) to get the card
+        fn = run([getCloudCard_sh]);
     }else {
-     console.log(chalk`{bold Assuming local docker-compose based HLF instance}`)
-      fn = run([card_sh]);
+        console.log(chalk`{bold Assuming local docker-compose based HLF instance}`);
+        fn = run([card_sh]);
     }
     return fn();
 });
@@ -252,17 +252,17 @@ gulp.task('paper-trading-webui:build',()=>{
     return fn().then(()=>{
     	console.log('>>  App running at http://localhost:3000/login ');
     });
-})
+});
 
 gulp.task('welcome',['help'],()=>{
-	// console.log(process.env);
+    // console.log(process.env);
     console.log(boxen(chalk.blue.bold('Welcome - Commerical Paper Trading'),{padding:1,margin:1}));
 });
 
 /**
- * 
- * 
- * 
+ *
+ *
+ *
  */
 gulp.task('cardstore:fs',()=>{
 
@@ -272,4 +272,4 @@ gulp.task('cardstore:fs',()=>{
     console.log(localstore);
 
 
-})
+});

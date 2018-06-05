@@ -6,6 +6,14 @@ source .bluemix/pipeline-COMMON.sh
 source .bluemix/pipeline-CLOUDANT.sh
 source .bluemix/pipeline-BLOCKCHAIN.sh
 
+# for local setups
+if [ -z "${BLOCKCHAIN_NETWORK_ENROLL_ID}" ]; then
+    export BLOCKCHAIN_NETWORK_ENROLL_ID=admin
+fi
+if [ -z "${BLOCKCHAIN_NETWORK_ENROLL_SECRET}" ]; then
+    export BLOCKCHAIN_NETWORK_ENROLL_SECRET=adminpw
+fi
+
 export CONTRACTS=$(ls contracts)
 export APPS=$(ls apps)
 if ls contracts/*/package.json > /dev/null 2>&1

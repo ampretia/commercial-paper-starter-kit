@@ -8,7 +8,9 @@ export BLOCKCHAIN_SERVICE_NAME=ibm-blockchain-5-prod
 export BLOCKCHAIN_SERVICE_PLAN=ibm-blockchain-plan-v1-starter-prod
 export BLOCKCHAIN_SERVICE_INSTANCE=blockchain-${IDS_PROJECT_NAME}
 export BLOCKCHAIN_SERVICE_KEY=Credentials-1
-export BLOCKCHAIN_NETWORK_CARD=admin@blockchain-network
+if [ -z "${BLOCKCHAIN_NETWORK_CARD}" ]; then
+    export BLOCKCHAIN_NETWORK_CARD=admin@blockchain-network
+fi
 
 function provision_blockchain {
     if ! cf service ${BLOCKCHAIN_SERVICE_INSTANCE} > /dev/null 2>&1

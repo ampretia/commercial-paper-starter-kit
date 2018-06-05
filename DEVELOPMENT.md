@@ -26,7 +26,7 @@ The Smart Contracts are not shown here.
 
 ## Next steps
 
-1. Get this scenario [running locally](./DEVELOPMENT-3.md)
-2. Get the Smart Contracts [running in the cloud](./DEVELOPMENT-4.md)
-3. Create a toolchain to [completely deploy in IBP](./DEVELOPMENT-5.md)
+1. Get this scenario [running locally](./docs/DEVELOPMENT-3.md)
+2. Get the Smart Contracts [running in the cloud](./docs/DEVELOPMENT-4.md)
+3. Create a toolchain to [completely deploy in IBP](./docs/DEVELOPMENT-5.md)
 

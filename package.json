@@ -22,7 +22,7 @@
   },
   "devDependencies": {
     "chalk": "^2.3.2",
-    "composer-cli": "^0.19.7",
+    "composer-cli": "unstable",
     "gulp": "^3.9.1",
     "gulp-help-doc": "^1.1.0",
     "gulp-run-command": "0.0.9",
