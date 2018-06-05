@@ -7,15 +7,14 @@
     "start": "node app.js",
     "build:dev": "gulp build-sass && gulp",
     "build:prod": "gulp build-sass",
-    "test":"echo testing",
-    "deploy":"echo deploying"
+    "test": "echo testing",
+    "deploy": "echo deploying"
   },
   "dependencies": {
-    "@ampretia/composer-wallet-ibmcos": "^0.1.3",
     "async": "^2.1.2",
     "body-parser": "^1.15.2",
-    "composer-admin": "^0.19.5",
-    "composer-client": "^0.19.5",
+    "composer-admin": "unstable",
+    "composer-client": "unstable",
     "compression": "^1.6.2",
     "cookie-parser": "^1.4.3",
     "cors": "^2.8.1",

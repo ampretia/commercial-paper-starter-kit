@@ -16,10 +16,10 @@
  * Contributors:
  *   David Huffman - Initial implementation
  *******************************************************************************/
-var TAG = 'SETUP.JS: ';
+let TAG = 'SETUP.JS: ';
 
-var vcap_app = {application_uris: ['']};
-var ext_uri = '';
+let vcap_app = {application_uris: ['']};
+let ext_uri = '';
 
 console.log(process.env);
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -57,22 +57,22 @@ else {
     };
 }
 
-process.env.NODE_ENV=''
-process.env.NODE_CONFIG=`{
-    "composer": {
-      "wallet": {
-        "type": "@ampretia/composer-wallet-ibmcos",
-        "desc": "Uses the IBM Cloud Object Store",
-        "options": {
-          "bucketName": "commercial-paper-demo",
-          "endpoint": "s3-api.us-geo.objectstorage.softlayer.net",
-          "apikey": "WmKck6Ta6JAaqM57mfkD_8kGDkldfJ4zfSTl-Id5oqhx",
-          "serviceInstanceId": "crn:v1:bluemix:public:cloud-object-storage:global:a/f312377c857f745dd4741a70d09a8e4c:fb474f32-8d51-4864-a2e7-459105254cfd::"
-        }
-      }
-    }
-  }`;
-  
+process.env.NODE_ENV='';
+// process.env.NODE_CONFIG=`{
+//     "composer": {
+//       "wallet": {
+//         "type": "@ampretia/composer-wallet-ibmcos",
+//         "desc": "Uses the IBM Cloud Object Store",
+//         "options": {
+//           "bucketName": "commercial-paper-demo",
+//           "endpoint": "s3-api.us-geo.objectstorage.softlayer.net",
+//           "apikey": "WmKck6Ta6JAaqM57mfkD_8kGDkldfJ4zfSTl-Id5oqhx",
+//           "serviceInstanceId": "crn:v1:bluemix:public:cloud-object-storage:global:a/f312377c857f745dd4741a70d09a8e4c:fb474f32-8d51-4864-a2e7-459105254cfd::"
+//         }
+//       }
+//     }
+//   }`;
+
 
 exports.SERVER.vcap_app = vcap_app;
 

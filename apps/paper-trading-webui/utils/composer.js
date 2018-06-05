@@ -7,6 +7,9 @@ const ns = 'org.example.commercialpaper';
 const uuidv1 = require('uuid/v1');
 const companyCardName = 'AAI@local';
 
+console.log('>>>  Web app composer utils')
+console.log(require.resolve('composer-client'));
+
 /**
  * { ticker: 'ASDFSDAF',
   par: 100000,
