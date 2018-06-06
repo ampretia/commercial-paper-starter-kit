@@ -2,7 +2,7 @@
 
 This repo is designed to provide an example of using blockchain tech, within a larger stack application. Centred around the provision of a Commerical Paper trading scenario.
 
-![](./docs/devlop-flow.png)
+![](./devlop-flow.png)
 
 We're focussing on the "Real Prototyping", and "Cloud Exploration" and starting on the road to "Real Cloud Deployment".  
 
@@ -19,14 +19,14 @@ Teaching details about the basics of Hyperledger Composer, Fabric or Indy is not
 
 Here is the logical structure of the technology components within this scenario.
 
-![](./docs/cparchitecture.png)
+![](./cparchitecture.png)
 
 The Smart Contracts are not shown here. 
 
 
 ## Next steps
 
-1. Get this scenario [running locally](./docs/DEVELOPMENT-3.md)
-2. Get the Smart Contracts [running in the cloud](./docs/DEVELOPMENT-4.md)
-3. Create a toolchain to [completely deploy in IBP](./docs/DEVELOPMENT-5.md)
+1. Get this scenario [running locally](./DEVELOPMENT-3.md)
+2. Get the Smart Contracts [running in the cloud](./DEVELOPMENT-4.md)
+3. Create a toolchain to [completely deploy in IBP](./DEVELOPMENT-5.md)
 

@@ -2,7 +2,7 @@
 ---
 > # Quick Start
 > ## Are you an end user in wanting to trade in Commerical Paper? [Go Here](USAGE.md) 
-> ## Are you a developer wishing to extend or build upon this solution? [Go Here](./docs/DEVELOPMENT.md)
+> ## Are you a developer wishing to extend or build upon this solution? [Go Here](DEVELOPMENT.md)
 ---
 
 # Commerical Paper Trading Scenario

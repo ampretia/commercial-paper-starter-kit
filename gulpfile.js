@@ -25,18 +25,20 @@ const rp = require('request-promise');
 const boxen = require('boxen');
 
 const localScriptDir = path.join(__dirname,'.localtoolchain');
+
+// local fabric start scripts
 const card_sh = path.resolve(__dirname,'ledgers','hyperledger-fabric','createPeerAdminCard.sh');
 const provisionFabric_sh = path.resolve(__dirname,'ledgers','hyperledger-fabric','startFabric.sh');
 
-// const startnetwork_sh = path.resolve(localScriptDir,'start-network.sh');
-const contractdeploy_sh = path.resolve(localScriptDir,'contract-deploy.sh');
+const contractdeploy_sh = path.resolve(localScriptDir,'contract-package-deploy.sh');
 const bootstrap_sh = path.resolve('.','contracts','commercial-paper-network','bootstrap.sh');
 
 const startindy_sh = path.resolve('.','services','identity','startIndy.sh');
 const stopindy_sh = path.resolve('.','services','identity','stopIndy_sh');
 
-const tradeapp_sh = path.resolve('.','apps','aai-web','start.sh');
+const tradeapp_sh = path.resolve('.','apps','paper-trading-webui','start.sh');
 const didmanager_sh = path.resolve('.','apps','did-manager','start.sh');
+
 const getCloudCard_sh = path.resolve(__dirname,'.localtoolchain','getCloudCard.sh');
 
 const args = require('yargs').argv;
@@ -89,18 +91,30 @@ gulp.task('default', ['help']);
  * Starts a local docker-compose based Fabric based on the current set of tools.
  * This will stop and remove any currently running local Fabric configuration.
  *
+ *
  * @task {fabric:provision}
+ * @group {Operational}
  */
 gulp.task('fabric:provision', ()=>{
+    // note that this could be run to create a starter plan instance as well.
     let fn = run([provisionFabric_sh]);
     return fn();
 });
 
+/**
+ * Creates the 'BLOCKCHAIN_NETWORK_CARD'
+ *
+ *
+ * @task {fabric:card}
+ * @arg {target} Whether the card should be created for the locally (default) running fabric or one defined in blockchain.json (--target=cloud)
+ * @group {Operational}
+ */
 gulp.task('fabric:card', ()=>{
     let fn;
     // check what the target is for the deployment
-    if (args.target==='cloud'){
+    if (args.target === 'cloud'){
         // need to use the blockchain.json file (assuming in the cwd) to get the card
+        console.log(chalk`{bold Using a IBP hosted HLF instance using blockchain.json}`);
         fn = run([getCloudCard_sh]);
     }else {
         console.log(chalk`{bold Assuming local docker-compose based HLF instance}`);
@@ -110,41 +124,16 @@ gulp.task('fabric:card', ()=>{
 });
 
 /**
- * Does the initial installation and start of the business network
+ * Calls a standard bootstrap script in the contracts directory. This will bootstrap basic data
+ * as required
  *
- * Invoked directly post 'npm install' so no requirement to call it directly.
- * Can be used though to restart everything
- *
- * Call `gulp bootstrap` after this to create initial resources
- * @task {startnetwork}
- */
-gulp.task('startnetwork',['provision'], ()=>{
-    let fn = run([startnetwork_sh]);
-    return fn().then(()=>{
-    	console.log('Next thing to run is gulp bootstrap');
-    });
-} );
-
-/**
- * Rebuilds and upgrades the deployed network
- *
- * @task {upgradenetwork}
- */
-gulp.task('upgradenetwork', ()=>{
-    let fn = run([upgradenetwork_sh]);
-    return fn().then(()=>{
-    	console.log('done...');
-    });
-} );
-
-/**
- * Calls a standard bootstrap script in the contracts directory
  *
  * @task {contract:bootstrap}
+ * @group {Operational}
  */
 gulp.task('contract:bootstrap', ()=>{
     if(!process.env.NODE_CONFIG){
-        console.log('NODE_CONFIG appears to not be set - it should be to use the local cardstore');
+        console.log('NODE_CONFIG appears to not be set');
     }else {
         let fn = run([bootstrap_sh]);
         return fn();
@@ -152,13 +141,15 @@ gulp.task('contract:bootstrap', ()=>{
 } );
 
 /**
- * Calls a standard bootstrap script in the contracts directory
+ * This will deploy a network, starting or updating it if required. Also bumps the version number of the network
+ *
  *
  * @task {contract:deploy}
+ * @group {Operational}
  */
 gulp.task('contract:deploy', ()=>{
     if(!process.env.NODE_CONFIG){
-        console.log('NODE_CONFIG appears to not be set - it should be to use the local cardstore');
+        console.log('NODE_CONFIG appears to not be set');
     }else {
         let fn = run([contractdeploy_sh]);
         return fn();
@@ -170,6 +161,7 @@ gulp.task('contract:deploy', ()=>{
  * and stands up a simple REST API for querying public DIDs
  *
  * @task {startindy}
+ * @group {Operational}
  */
 gulp.task('startindy', ()=>{
     let fn = run([startindy_sh]);
@@ -182,6 +174,7 @@ gulp.task('startindy', ()=>{
  * Stops the Indy Identity Network locally
  *
  * @task {stopindy}
+ * @group {Operational}
  */
 gulp.task('stopindy', ()=>{
     let fn = run([stopindy_sh]);
@@ -194,6 +187,7 @@ gulp.task('stopindy', ()=>{
  * runs the DID Manager Web app to associated Composer Participants to PublicDIDs
  *
  * @task {didmanager}
+ * @group {Operational}
  */
 gulp.task('didmanager', ()=>{
     let fn = run([didmanager_sh]);
@@ -202,15 +196,16 @@ gulp.task('didmanager', ()=>{
     });
 } );
 
-/*"
- *" to trade Commercial Paper
- *"
+/*
+ * Stars the Commercial Paper Trading application.
+ *
  * @task {tradeapp}
+ * @group {UI}
  */
-gulp.task('tradeapp', ()=>{
+gulp.task('app:trading', ()=>{
     let fn = run([tradeapp_sh]);
     return fn().then(()=>{
-    	console.log('>>  App running at http://localhost:3000/login ');
+        console.log('>>  App running at http://localhost:3000/login ');
     });
 } );
 
@@ -247,7 +242,7 @@ gulp.task('env', ()=>{
 });
 
 
-gulp.task('paper-trading-webui:build',()=>{
+gulp.task('app:build',()=>{
     let fn = run(['npm run build --prefix ./apps/paper-trading-webui']);
     return fn().then(()=>{
     	console.log('>>  App running at http://localhost:3000/login ');

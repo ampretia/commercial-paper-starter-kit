@@ -17,6 +17,7 @@ $ cd commercial-paper-starter-kit && npm install
 You can use the SSH approach to clone the repo should you wish. 
 
 > You will need to have the 'jq' tool installed, and if you have gulp aready that's fine. If you don't have gulp it will be installed within this project. But remember to use `npx gulp` rather than just `gulp`
+> This npm install will do the essential install to get you up and going.
 
 1. *Network*
 We'll be running all the tools within docker containers, they all need to communicate so it has found
@@ -26,6 +27,14 @@ ip address, therefore create a newtork with a defined gateway
 ```
 $  docker network create cp-stack-network --gateway 172.25.0.1 --subnet 172.25.0.0/16 
 ```
+
+It's also a good idea to keep track of the logs that are produced by docker.  IN A NEW WINDOW issue this command 
+
+```
+$ npm run monitor
+```
+
+ This will display an going log of the docker output, colour coded per container. 
 
 2. Hyperledger Composer Card Store
 We need to chose a location to store the Composer Network Cards - these are the ids that are used to connect apps to the blockchain. 
@@ -62,7 +71,7 @@ None specified, will use default.
 [13:46:36] Finished 'env' after 12 ms
 ```
 
-3. Hyperledger Fabric
+3. Hyperledger Fabric Provision
 We need a blockchain - therefore we need to start up a Hyperledger Fabric instance
 
 ```
@@ -82,6 +91,7 @@ a7ab22c64cc2        hyperledger/fabric-ca:x86_64-1.1.0        "sh -c 'fabric-ca-
 
 A single peer, single orderer and certificate authority are setup ready with CouchDb to handle queries on the worldstate.
 
+4. Get access
 Next we need to create the first of our Composer Network cards to represent the authority who can install smart contracts.
 
 ```
@@ -96,6 +106,8 @@ Need to deploy the smart contract to Fabric; depending on the fabric deployment 
 $ export BLOCKCHAIN_NETWORK_CARD=PeerAdmin@hlfv1
 $ export HL_COMPOSER_CLI=$(npm bin)/composer
 ```
+
+5. Deploy the contract
 
 We need to do the initial deploy, and then bootstrap data into it
 
