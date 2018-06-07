@@ -49,7 +49,6 @@ async function showMarket(userCardName){
 
         console.log(chalk.blue.bold('Commerical Paper Trading - Markets'));
 
-
         // let table = new Table();
         const businessNetworkConnection = new BusinessNetworkConnection();
         LOG.info('> Connecting business network connection');
@@ -59,8 +58,6 @@ async function showMarket(userCardName){
 
         let companiesRegistry = await businessNetworkConnection.getRegistry(`${ns}.Company`);
 
-        let paperOwnershipRegistry = await businessNetworkConnection.getRegistry(`${ns}.PaperOwnership`);
-        let paperListingRegistry = await businessNetworkConnection.getRegistry(`${ns}.PaperListing`);
         let paperRegistry = await businessNetworkConnection.getRegistry(`${ns}.CommercialPaper`);
         let marketRegistry = await businessNetworkConnection.getRegistry(`${ns}.Market`);
 
@@ -68,16 +65,10 @@ async function showMarket(userCardName){
         for (const market of cs) {
             let listingsTable = new Table({head:['ID','Discount','Ticker','Par','Maturity','Issuer']});
             console.log(chalk`\n{bold Current listings in} {blue ${market.ID}}`);
-            for (const paperListingRef of market.papersForSale) {
-
-                let paperListing = await paperListingRegistry.get(paperListingRef.getIdentifier());
-
-                let paperOwnership = await paperOwnershipRegistry.get(paperListing.paperOwnership.getIdentifier());
-
-                let paper = await paperRegistry.get(paperOwnership.paper.getIdentifier());
+            for (const paperListing of market.papersForSale) {
+                let paper = await paperRegistry.get(paperListing.paper.getIdentifier());
                 let issuer = await companiesRegistry.get(paper.issuer.getIdentifier());
                 listingsTable.push([paperListing.ID, paperListing.discount,paper.ticker,paper.par,paper.maturity,issuer.name]);
-
             }
             console.log(listingsTable.length>0 ? listingsTable.toString() :'<none>');
         }

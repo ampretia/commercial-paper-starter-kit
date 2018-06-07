@@ -116,7 +116,7 @@ async function submitTx(userCardName,answers){
         listTx.papersToList = [];
         // need to create the references for the papers created
         for (let i=0; i<answers.numberToCreate;i++){
-            listTx.papersToList.push(factory.newRelationship(ns,'PaperOwnership',`${participantId}#${createTx.CUSIP}#${i}`));
+            listTx.papersToList.push(factory.newRelationship(ns,'CommercialPaper',`${createTx.CUSIP}#${i}`));
         }
 
         LOG.info('> Listing on market');

@@ -73,14 +73,14 @@ async function createPaper(tx) {  // eslint-disable-line no-unused-vars
  * @param {org.example.commercialpaper.ListOnMarket} tx - the transaction instance
  * @transaction
  */
-async function listOnMarket(tx) {  // eslint-disable-line no-unused-vars 
-    let market = tx.market;  
+async function listOnMarket(tx) {  // eslint-disable-line no-unused-vars
+    let market = tx.market;
     // validation
     // market can accept the papers to be listed, currency correct etc etc.
 
     const marketRegistry = await getAssetRegistry(`${ns}.Market`);
     const companyRegistry = await getParticipantRegistry(`${ns}.Company`);
-    
+
     for (const paper of tx.papersToList) {
         let company = await companyRegistry.get(paper.owner.getIdentifier());
 
@@ -93,7 +93,7 @@ async function listOnMarket(tx) {  // eslint-disable-line no-unused-vars
         market.papersForSale.push(listing);
     }
     await marketRegistry.update(market);
-    
+
     // emit event
     const listEvent = getFactory().newEvent(ns, 'ListOnMarketEvent');
     listEvent.market = market;
@@ -127,10 +127,8 @@ async function purchasePaper(tx) {  // eslint-disable-line no-unused-vars
     let newAccount = await accountRegistry.get(tx.account.getIdentifier());
 
     // first check that the new account is valid and has enough money to purchase the paper
-    if (!newOwner.paperTradingAccounts.includes(tx.account)) {
-        throw new Error ("Account " + tx.account.getIdentifier() + " is not one of the paper trading accounts controlled by " + newOwner.name);
-    } else if (newAccount.cashBalance < (paper.par * (100-paperListing.discount) / 100)) {
-        throw new Error ("Not enough money is Account " + tx.account.getIdentifier() + " to purchase this commercial paper");
+    if (newAccount.cashBalance < (paper.par * (100-paperListing.discount) / 100)) {
+        throw new Error ('Not enough money is Account ' + tx.account.getIdentifier() + ' to purchase this commercial paper');
     }
 
     // this is being purchased so we need to remove the PaperListing asset
@@ -143,7 +141,7 @@ async function purchasePaper(tx) {  // eslint-disable-line no-unused-vars
     currentAccount.assets = currentAccount.assets.filter((e) => {
         return e.getIdentifier() !== paper.CUSIP;
     });
-    
+
     // now need to get the account that this was purchased via and update that
     newAccount.assets.push(getFactory().newRelationship(ns, 'CommercialPaper', paper.getIdentifier()));
 
@@ -170,7 +168,7 @@ async function purchasePaper(tx) {  // eslint-disable-line no-unused-vars
 }
 
 /**
- * Paper has matured and now it can be redeemed 
+ * Paper has matured and now it can be redeemed
  * @param {org.example.commercialpaper.RedeemPaper} tx - the transaction instance
  * @transaction
  */

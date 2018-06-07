@@ -46,9 +46,9 @@ const questions = [
         message: 'Enter ID of the Market this paper is listed in'
     },
     {
-        name: 'paperListingId',
+        name: 'listingID',
         type: 'input',
-        message: 'Enter "ID" name of the paper to purchase'
+        message: 'Enter the listing ID of the paper you want to purchase'
     },
     {
         name: 'accountId',
@@ -78,10 +78,10 @@ async function submitTx(userCardName,answers){
         }
         let factory = businessNetworkDefinition.getFactory();
 
-
         let purchaseTx = factory.newTransaction(ns,'PurchasePaper');
         purchaseTx.market = factory.newRelationship(ns,'Market',answers.marketId);
-        purchaseTx.listing = factory.newRelationship(ns,'PaperListing',answers.paperListingId);
+        // purchaseTx.listing = factory.newRelationship(ns,'PaperListing',answers.paperListingId);
+        purchaseTx.listingID = answers.listingID;
         purchaseTx.account = factory.newRelationship(ns,'Account',answers.accountId);
 
         console.log('Submitting transaction for purchase paper');

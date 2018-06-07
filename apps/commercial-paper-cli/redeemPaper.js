@@ -43,11 +43,6 @@ winston.loggers.add('app', {
 const LOG = winston.loggers.get('app');
 const questions = [
     {
-        name: 'accountId',
-        type: 'input',
-        message: 'Enter ID of the account this paper is held in'
-    },
-    {
         name: 'paperId',
         type: 'input',
         message: 'Enter "ID" name of the paper to redeem'
@@ -60,7 +55,7 @@ const questions = [
  * Main Function
  * @param {String} cardName userCardName
  */
-async function submitTx(userCardName){
+async function submitTx(userCardName,answers){
     try {
 
         // let table = new Table();
@@ -76,21 +71,8 @@ async function submitTx(userCardName){
         }
         let factory = businessNetworkDefinition.getFactory();
 
-        let accountRegistry = await businessNetworkConnection.getRegistry(`${ns}.Account`);
-        let paperOwnershipRegistry = await businessNetworkConnection.getRegistry(`${ns}.PaperOwnership`);
-
-        let account = await accountRegistry.get(answers.accountId);
-        // console.log(account.assets);
-        let paperOwnership = account.assets.filter(async (e)=>{
-
-            let ownerhsip = await paperOwnershipRegistry.get(e.getIdentifier());
-            return ownerhsip.paper.getIdentifier() === answers.paperId;
-        });
-
-        console.log(paperOwnership);
         let redeemTx = factory.newTransaction(ns,'RedeemPaper');
-        redeemTx.maturedPaper = paperOwnership[0];//factory.newRelationship(ns,'PaperOwnership',paperOwnership.getIdentifier());
-
+        redeemTx.maturedPaper = factory.newRelationship(ns,'CommercialPaper',answers.paperId);
 
         console.log('Submitting transaction for paper redemption');
         await businessNetworkConnection.submitTransaction(redeemTx);

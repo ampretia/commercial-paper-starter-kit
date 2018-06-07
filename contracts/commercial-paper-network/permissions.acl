@@ -24,10 +24,12 @@
 //     action: ALLOW
 // }
 
-rule CompaniesUpdateSelves {
-	description: "Allow companies to update themselves"
+// COMPANY RULES //
+
+rule CompaniesControlSelves {
+	description: "Allow companies full control over themselves"
   	participant(p): "org.example.commercialpaper.Company"
-  	operation: UPDATE
+  	operation: ALL
     resource(r): "org.example.commercialpaper.Company"
   	condition: (p.getIdentifier() === r.getIdentifier())
   	action: ALLOW
@@ -41,22 +43,13 @@ rule CompaniesSeeEachOther {
   	action: ALLOW
 }
 
-rule CompaniesSeeIssuedPapers {
-	description: "Allow companies to see commercial papers that they issued"
-  	participant(p): "org.example.commercialpaper.Company"
-  	operation: READ
-    resource(r): "org.example.commercialpaper.CommercialPaper"
-  	condition: (r.issuer.getIdentifier() === p.getIdentifier())
-  	action: ALLOW
-}
 
-rule CompaniesSeeOwnedPapers {
-	description: "Allow companies to see commercial papers that they own"
-  	participant(p): "org.example.commercialpaper.Company"
-  	operation: READ
-    resource(r): "org.example.commercialpaper.CommercialPaper"
-  	condition: (r.owner.getIdentifier() === p.getIdentifier())
-  	action: ALLOW
+rule CompaniesSeePapers {
+  description: "Allow companies to see all commercial papers"
+  participant: "org.example.commercialpaper.Company"
+  operation: READ
+  resource: "org.example.commercialpaper.CommercialPaper"
+  action: ALLOW
 }
 
 rule CompaniesSeeAndUpdateTradingAccounts {
@@ -71,7 +64,7 @@ rule CompaniesSeeAndUpdateTradingAccounts {
 }
 
 rule CompaniesSeeAndUpateIssuingAccount {
-	description: "Allow companies to view and update the acount they use to issue commercial papers"
+	description: "Allow companies to view and update the account they use to issue commercial papers"
   	participant(p): "org.example.commercialpaper.Company"
   	operation: READ, UPDATE
     resource(r): "org.example.commercialpaper.Account"
@@ -113,7 +106,7 @@ rule CompaniesSubmitListTx {
 }
 
 rule CompaniesUpdateMarketWhenListing {
-	description: "Allow companies to update a market with commercial papers"
+	description: "Allow companies to update a market with commercial paper listings"
   	participant: "org.example.commercialpaper.Company"
   	operation: UPDATE
     resource: "org.example.commercialpaper.Market"
@@ -173,26 +166,151 @@ rule CompaniesSeeAndUpdateAccountsWhenRedeeming {
   	action: ALLOW
 }
 
-rule SystemACL {
-  description:  "System ACL to permit all access"
-  participant: "org.hyperledger.composer.system.Participant"
-  operation: ALL
-  resource: "org.hyperledger.composer.system.**"
-  action: ALLOW
-}
+// TRADER RULES //
 
-rule NetworkAdminUser {
-    description: "Grant business network administrators full access to user resources"
-    participant: "org.hyperledger.composer.system.NetworkAdmin"
-    operation: ALL
-    resource: "**"
-    action: ALLOW
-}
+// rule TradersControlSelves {
+//   description: "Allow traders full control over themselves"
+//   participant(p): "org.example.commercialpaper.Trader"
+//   operation: ALL
+//   resource(r): "org.example.commercialpaper.Trader"
+//   condition: (p.getIdentifier() === r.getIdentifier())
+//   action: ALLOW
+// }
 
-rule NetworkAdminSystem {
-    description: "Grant business network administrators full access to system resources"
-    participant: "org.hyperledger.composer.system.NetworkAdmin"
-    operation: ALL
-    resource: "org.hyperledger.composer.system.**"
-    action: ALLOW
-}
+// rule TradersSeeColleagues {
+//   description: "Allow traders to see other traders in the same company as them"
+//   participant(p): "org.example.commercialpaper.Trader"
+//   operation: READ
+//   resource(r): "org.example.commercialpaper.Trader"
+//   condition: (p.worksFor.getIdentifier() === r.worksFor.getIdentifier())
+//   action: ALLOW
+// }
+
+// rule TradersSeeManagedAccounts {
+//   description: "Allow traders to see the accounts that they manage"
+//   participant(p): "org.example.commercialpaper.Trader"
+//   operation: READ
+//   resource(r): "org.example.commercialpaper.Account"
+//   condition: (p.manages.some(function (account) {
+//       return account.getIdentifier() === r.getIdentifier();
+//     }))
+//   action: ALLOW
+// }
+
+// rule TradersSeeMarkets {
+//   description: "Allow traders to see available Market assets"
+//   participant: "org.example.commercialpaper.Trader"
+//   operation: READ
+//   resource: "org.example.commercialpaper.Market"
+//   action: ALLOW
+// }
+
+// rule TradersSubmitCreateTx {
+//   description: "Allow traders to submit a CreatePaper transaction"
+//   participant: "org.example.commercialpaper.Trader"
+//   operation: CREATE
+//   resource: "org.example.commercialpaper.CreatePaper"
+//   action: ALLOW
+// }
+
+// rule TradersCreateCommercialPapers {
+//   description: "Allow traders to create a commercial paper asset"
+//   participant: "org.example.commercialpaper.Trader"
+//   operation: CREATE
+//   resource: "org.example.commercialpaper.CommercialPaper"
+//   transaction: "org.example.commercialpaper.CreatePaper"
+//   action: ALLOW
+// }
+
+// rule TradersSubmitListTx {
+//   description: "Allow traders to submit a ListOnMarket transaction"
+//   participant: "org.example.commercialpaper.Trader"
+//   operation: CREATE
+//   resource: "org.example.commercialpaper.ListOnMarket"
+//   action: ALLOW
+// }
+
+// rule TradersUpdateMarketWhenListing {
+//   description: "Allow traders to update a market with commercial paper listings"
+//   participant: "org.example.commercialpaper.Trader"
+//   operation: CREATE
+//   resource: "org.example.commercialpaper.Market"
+//   transaction: "org.example.commercialpaper.ListOnMarket"
+//   action: ALLOW
+// }
+
+// rule TradersSubmitPurchaseTx {
+//   description: "Allow traders to submit a PurchasePaper transaction"
+//   participant: "org.example.commercialpaper.Trader"
+//   operation: CREATE
+//   resource: "org.example.commercialpaper.PurchasePaper"
+//   action: ALLOW
+// }
+
+// rule TradersSeeAndUpdatePapersWhenPurchasing {
+//   description: "Allow traders to view and update the commercial paper that they are purchasing"
+//   participant: "org.example.commercialpaper.Trader"
+//   operation: READ, UPDATE
+//   resource: "org.example.commercialpaper.CommercialPaper"
+//   transaction: "org.example.commercialpaper.PurchasePaper"
+//   action: ALLOW
+// }
+
+// rule TradersSeeAndUpdateAccountsWhenPurchasing {
+//   description: "Allow companies to view and update all accounts when purchasing a commercial paper"
+//   participant: "org.example.commercialpaper.Trader"
+//   operation: READ, UPDATE
+//   resource: "org.example.commercialpaper.Account"
+//   transaction: "org.example.commercialpaper.PurchasePaper"
+//   action: ALLOW
+// }
+
+// rule TradersUpdateMarketWhenPurchasing {
+//   description: "Allow traders to update a marekt and remove purchased commercial paper listings"
+//   participant: "org.example.commercialpaper.Trader"
+//   operation: UPDATE
+//   resource: "org.example.commercialpaper.Market"
+//   transaction: "org.example.commercialpaper.PurchasePaper"
+//   action: ALLOW
+// }
+
+// rule TradersSubmitRedeemTx {
+//   description: "Allow traders to submit a ReedemPaper transaction"
+//   participant: "org.example.commercialpaper.Trader"
+//   operation: CREATE
+//   resource: "org.example.commercialpaper.RedeemPaper"
+//   action: ALLOW
+// }
+
+// rule TradersSeeAndUpdateAccountsWhenRedeeming {
+//   description: "Allow traders to see and update all accounts when redeeming a commercial paper"
+//   participant: "org.example.commercialpaper.Trader"
+//   operation: READ, UPDATE
+//   resource: "org.example.commercialpaper.Account"
+//   transaction: "org.example.commercialpaper.RedeemPaper"
+//   action: ALLOW
+// }
+
+// rule SystemACL {
+//   description:  "System ACL to permit all access"
+//   participant: "org.hyperledger.composer.system.Participant"
+//   operation: ALL
+//   resource: "org.hyperledger.composer.system.**"
+//   action: ALLOW
+// }
+
+// rule NetworkAdminUser {
+//     description: "Grant business network administrators full access to user resources"
+//     participant: "org.hyperledger.composer.system.NetworkAdmin"
+//     operation: ALL
+//     resource: "**"
+//     action: ALLOW
+// }
+
+// rule NetworkAdminSystem {
+//     description: "Grant business network administrators full access to system resources"
+//     participant: "org.hyperledger.composer.system.NetworkAdmin"
+//     operation: ALL
+//     resource: "org.hyperledger.composer.system.**"
+//     action: ALLOW
+// }

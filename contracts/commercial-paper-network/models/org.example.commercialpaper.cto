@@ -128,8 +128,6 @@ concept PaperListing {
   o Double            discount   range=[0.0,]
 }
 
-
-
 /**
  * A market in which papers are listed, allows for variable rules on how things are traded
  */
