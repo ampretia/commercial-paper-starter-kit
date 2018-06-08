@@ -30,13 +30,25 @@ function sendMsg(json,socket) {
     if (socket) {
         try {
             let dataToSend = JSON.stringify(json);
-            console.log(`WebSocket Server Sening: ${dataToSend}`);
+            console.log(`WebSocket Server Sending: ${dataToSend}`);
             socket.send(dataToSend);
         }
         catch (error) {
             console.error('Error sending response to client:', error.message);
         }
     }
+}
+
+function refreshAllClients (socket) {
+  if (socket) {
+      try {
+          console.log(`WebSocket Refresh Request Sending`);
+          socket.emit('broadcast', {msg: 'refresh'});
+      }
+      catch (error) {
+          console.error('Error sending response to client:', error.message);
+      }
+  }
 }
 
 module.exports.setup = function setup(peerHosts, chaincode_helper, useTLS) {
@@ -60,6 +72,10 @@ module.exports.process_msg = async function (socket, data) {
         if (data.type === 'create') {
             if (data.paper && data.paper.ticker) {
                 await composer.issueCP(data.paper,data);
+                // TODO: look at using emit to send a message to all users so that all trading menus update
+                // sendRefresh(socket);
+                console.log("attempting refresh");
+                refreshAllClients(socket);
             }
         }
         else if (data.type === 'get_papers' || data.type === 'get_open_trades') {
@@ -75,10 +91,12 @@ module.exports.process_msg = async function (socket, data) {
         else if (data.type === 'transfer_paper') {
             console.log(TAG, 'transferring paper:', data);
             await composer.transferCP(data);
+            refreshAllClients(socket);
         }
         else if (data.type === 'redeem_paper') {
             console.log(TAG, 'redeeming paper:', data);
             await composer.redeem(data);
+            refreshAllClients(socket);
         }
         else if (data.type === 'get_company') {
             // console.log(TAG, 'getting company information');

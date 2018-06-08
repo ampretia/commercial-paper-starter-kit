@@ -124,6 +124,9 @@ function start_websocket_server() {
             await part2.process_msg(ws, data);
 
         });
+        ws.on('broadcast', function (data) {
+          wss.broadcast(data);
+        });
         ws.on('close', function () {
         });
     });
