@@ -111,9 +111,8 @@ module.exports.redeem = async function(options={}){
     let account = await accountRegistry.get(cp.accountId);
     // console.log(account.assets);
     let paperOwnership = account.assets.filter(async (e)=>{
-
-        let ownerhsip = await paperOwnershipRegistry.get(e.getIdentifier());
-        return ownerhsip.paper.getIdentifier() === cp.CUSIP;
+        let ownership = await paperOwnershipRegistry.get(e.getIdentifier());
+        return ownership.paper.getIdentifier() === cp.CUSIP;
     });
     let redeemTx = factory.newTransaction(ns,'RedeemPaper');
     redeemTx.maturedPaper = paperOwnership[0];
@@ -271,6 +270,8 @@ module.exports.ownHoldings = async function(options={}){
     for (const paperref of issuedPaperAccount.assets){
         let paperOwnership = await paperOwnershipRegistry.get(paperref.getIdentifier());
         let paper = await paperRegistry.get(paperOwnership.paper.getIdentifier());
+        let issuer = await companiesRegistry.get(paper.issuer.getIdentifier());
+        let owner = await companiesRegistry.get(paperOwnership.owner.getIdentifier());
         let entry = {
             issueDate:paper.issueDate,
             cusip:paper.CUSIP,
@@ -279,8 +280,8 @@ module.exports.ownHoldings = async function(options={}){
             quantity: 1,
             discount: 0.,
             maturity: paper.maturity,
-            issuer: company.name,
-            owner: options.user.substr(options.user.indexOf('@')+1)
+            issuer: issuer.name,
+            owner: owner.name
         };
 
         listingsTable.push(entry);
@@ -291,7 +292,8 @@ module.exports.ownHoldings = async function(options={}){
         for (const paperRef of account.assets){
             let ownership = await paperOwnershipRegistry.get(paperRef.getIdentifier());
             let paper = await paperRegistry.get(ownership.paper.getIdentifier());
-
+            let issuer = await companiesRegistry.get(paper.issuer.getIdentifier());
+            let owner = await companiesRegistry.get(ownership.owner.getIdentifier());
             let entry = {
                 issueDate:paper.issueDate,
                 cusip:paper.CUSIP,
@@ -300,8 +302,8 @@ module.exports.ownHoldings = async function(options={}){
                 quantity: 1,
                 discount: 0.,
                 maturity: paper.maturity,
-                issuer: company.name,
-                owner: 'na'
+                issuer: issuer.name,
+                owner: owner.name
             };
 
             listingsTable.push(entry);

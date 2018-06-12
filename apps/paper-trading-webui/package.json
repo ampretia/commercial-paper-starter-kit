@@ -13,8 +13,8 @@
   "dependencies": {
     "async": "^2.1.2",
     "body-parser": "^1.15.2",
-    "composer-admin": "unstable",
-    "composer-client": "unstable",
+    "composer-admin": "0.19.8",
+    "composer-client": "0.19.8",
     "compression": "^1.6.2",
     "cookie-parser": "^1.4.3",
     "cors": "^2.8.1",

@@ -40,6 +40,7 @@ html
 				//Tab Navigation, show the corresponding panel
 				$(".nav").click(function(){
 					var show = $(this).html().trim().toLowerCase();
+					$('#tradesBody').empty();
 					showPanel(show);
 				});
 				function showPanel(show){
@@ -52,7 +53,11 @@ html
 						//$("#error404").fadeIn();
 					}
 					else{
-						$("#" + show + "Panel").fadeIn(300);
+						
+						setTimeout(function () {
+								$("#" + show + "Panel").fadeIn(300);
+					  }, 600);
+						/*$("#" + show + "Panel").fadeIn(1000);*/
 						$(".selectedNav").removeClass("selectedNav");
 						$(this).addClass("selectedNav");
 					}
@@ -109,6 +114,7 @@ html
 				#notificationPanel
 					span.fa.fa-check#noticeIcon
 					#noticeText YOUR TRADE WAS SUBMITTED!
+					#noticeText This may take a moment.
 					button(type="button")#closeNotification OK
 				
 				#errorNotificationPanel

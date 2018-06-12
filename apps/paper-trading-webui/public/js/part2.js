@@ -85,7 +85,11 @@ $(document).on('ready', function () {
                 console.log('creating paper, sending', obj);
                 ws.send(JSON.stringify(obj));
                 $('.panel').hide();
-                $('#tradePanel').show();
+                setTimeout(function () {
+    			$("#tradePanel").fadeIn(300);
+    		}, 600);
+                window.history.pushState({},'', "trade");
+                refreshPage();
             }
         }
         return false;
@@ -156,14 +160,10 @@ $(document).on('ready', function () {
         for (let i in panels) {
             build_trades(bag.papers, panels[i]);
         }
+        refreshPage();
     });
 
-    $('#refresh').click( function() {
-        console.log('refresh');
-        ws.send(JSON.stringify({type: 'get_open_trades', v: 2, user: user.username}));
-        ws.send(JSON.stringify({type: 'get_own_papers', v: 2, user: user.username}));
-        ws.send(JSON.stringify({type: 'get_company', company: user.name, user: user.username}));
-    });
+    $('#refresh').click(refreshPage);
 
     //trade events
     $(document).on('click', '.buyPaper', function () {
@@ -277,10 +277,7 @@ function connect_to_server() {
         clear_blocks();
         $('#errorNotificationPanel').fadeOut();
         ws.send(JSON.stringify({type: 'chainstats', v: 2, user: user.username}));
-        ws.send(JSON.stringify({type: 'get_papers', v: 2, user: user.username}));
-        if (user.name && user.role !== 'auditor') {
-            ws.send(JSON.stringify({type: 'get_company', company: user.name, user: user.username}));
-        }
+        refreshPage();
     }
 
     /**  */
@@ -344,6 +341,9 @@ function connect_to_server() {
                     ws.send(JSON.stringify({type: 'get_company', company: user.name, user: user.username}));
                 }
             }
+            else if (data.msg === 'refresh') {
+              refreshPage();
+            }
             else if (data.type === 'error') {
                 console.log('Error:', data.error);
             }
@@ -375,6 +375,29 @@ function connect_to_server() {
 // =================================================================================
 //	UI Building
 // =================================================================================
+
+function refreshPage() {
+    // refresh the page depending on what the url contains
+    var currentPage = window.location.pathname;
+    if (currentPage == "/trade") {
+      console.log("trade refresh");
+      ws.send(JSON.stringify({type: 'get_open_trades', v: 2, user: user.username}));
+    }
+    else if (currentPage == "/holding") {
+      console.log("holding refresh");
+      ws.send(JSON.stringify({type: 'get_own_papers', v: 2, user: user.username}));
+    }
+    else {
+      console.log('default refresh');
+      ws.send(JSON.stringify({type: 'get_open_trades', v: 2, user: user.username}));
+      ws.send(JSON.stringify({type: 'get_own_papers', v: 2, user: user.username}));
+    }
+    if (user.name && user.role !== 'auditor') {
+        ws.send(JSON.stringify({type: 'get_company', company: user.name, user: user.username}));
+    }
+    // ws.send(JSON.stringify({type: 'get_company', company: user.name, user: user.username}));
+}
+
 /**
  * Process the list of trades from the server and displays them in the trade list.
  * This function builds the tables for multiple panels, so an object is needed to
@@ -412,7 +435,11 @@ function build_trades(papers, panelDesc) {
 
                 if (excluded(entries[i], filter)) {
                     let style=null;
-                    // if (user.name.toLowerCase() === entries[i].owner.toLowerCase()) {
+                    // console.log("USERNAME IS:" + JSON.stringify() );
+                    if ($('#companyName').html().toLowerCase() === escapeHtml(entries[i].owner.toLowerCase()) && entries[i].owner.toLowerCase() === entries[i].issuer.toLowerCase()) {
+                      style = 'invalid';
+                    }
+                    // if (entries[i].owner.toLowerCase() == entries[i].owner.toLowerCase()) {
                     //     //cannot buy my own stuff
                     //     style = 'invalid';
                     // }
@@ -443,13 +470,13 @@ function build_trades(papers, panelDesc) {
                     // Only the trade panel should allow you to interact with trades
                     if (panelDesc.name === 'trade') {
                         let disabled = false;
-                        // if (user.name.toLowerCase() === entries[i].owner.toLowerCase()) {disabled = true;}			//cannot buy my own stuff
+                        if ($('#companyName').html().toLowerCase() === escapeHtml(entries[i].owner.toLowerCase())) {disabled = true;}			//cannot buy my own stuff
                         // if (entries[i].issuer.toLowerCase() !== entries[i].owner.toLowerCase()) {disabled = true;}
                         let button = buyButton(disabled, entries[i].cusip, entries[i].issuer);
                         row.appendChild(button);
                     } else if (panelDesc.name === 'holding') {
                         let disabled = false;
-                        // if (user.name.toLowerCase() === entries[i].owner.toLowerCase()) {disabled = true;}			//cannot buy my own stuff
+                        if (entries[i].issuer.toLowerCase() === entries[i].owner.toLowerCase()) {disabled = true;}			//cannot buy my own stuff
                         // if (entries[i].issuer.toLowerCase() !== entries[i].owner.toLowerCase()) {disabled = true;}
                         let button = redeemButton(disabled, entries[i].cusip, entries[i].issuer);
                         row.appendChild(button);
@@ -467,6 +494,8 @@ function build_trades(papers, panelDesc) {
             {html = '<tr><td>nothing here...</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>';}
             else if (panelDesc.name === 'audit')
             {html = '<tr><td>nothing here...</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>';} // No action column
+            else if (panelDesc.name === 'holding')
+            {html = '<tr><td>nothing here...</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>';}
             $(panelDesc.tableID).html(html);
         } else {
             // Remove the existing table data
@@ -488,6 +517,8 @@ function build_trades(papers, panelDesc) {
         {html = '<tr><td>nothing here...</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>';}
         else if (panelDesc.name === 'audit')
         {html = '<tr><td>nothing here...</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>';} // No action column
+        else if (panelDesc.name === 'holding')
+        {html = '<tr><td>nothing here...</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>';}
         $(panelDesc.tableID).html(html);
     }
 }
