@@ -5,9 +5,9 @@ const BusinessNetworkConnection = require('composer-client').BusinessNetworkConn
 const AdminConnection = require('composer-admin').AdminConnection;
 const ns = 'org.example.commercialpaper';
 const uuidv1 = require('uuid/v1');
-const companyCardName = 'AAI@local';
+const companyCardName = 'AAI@hlfv1';
 
-console.log('>>>  Web app composer utils')
+console.log('>>>  Web app composer utils');
 console.log(require.resolve('composer-client'));
 
 /**
@@ -24,7 +24,7 @@ console.log(require.resolve('composer-client'));
 module.exports.issueCP = async function(cp,options={}){
     let bnc = new BusinessNetworkConnection();
     let participantId = options.user.substr(options.user.indexOf('@')+1);
-    let cardName = options.user.substr(options.user.indexOf('@')+1)+'@local';
+    let cardName = options.user.substr(options.user.indexOf('@')+1)+'@hlfv1';
     if (!cardName) {
         cardName = companyCardName;
     }
@@ -64,7 +64,7 @@ module.exports.issueCP = async function(cp,options={}){
 module.exports.transferCP = async function(options={}){
     let bnc = new BusinessNetworkConnection();
     let participantId=options.user.substr(options.user.indexOf('@')+1);
-    let cardName = participantId+'@local';
+    let cardName = participantId+'@hlfv1';
     if (!cardName) {
         cardName = companyCardName;
     }
@@ -93,7 +93,7 @@ module.exports.transferCP = async function(options={}){
 module.exports.redeem = async function(options={}){
     let bnc = new BusinessNetworkConnection();
     let participantId=options.user.substr(options.user.indexOf('@')+1);
-    let cardName = participantId+'@local';
+    let cardName = participantId+'@hlfv1';
     if (!cardName) {
         cardName = companyCardName;
     }
@@ -140,7 +140,7 @@ module.exports.redeem = async function(options={}){
  */
 module.exports.showMarket = async function(options={}){
     let bnc = new BusinessNetworkConnection();
-    let cardName = options.user.substr(options.user.indexOf('@')+1)+'@local';
+    let cardName = options.user.substr(options.user.indexOf('@')+1)+'@hlfv1';
     if (!cardName) {
         cardName = companyCardName;
     }
@@ -196,7 +196,7 @@ module.exports.showMarket = async function(options={}){
 
 module.exports.getCompany = async function(options={}){
     let bnc = new BusinessNetworkConnection();
-    let cardName = options.user.substr(options.user.indexOf('@')+1)+'@local';
+    let cardName = options.user.substr(options.user.indexOf('@')+1)+'@hlfv1';
     if (!cardName) {
         cardName = companyCardName;
     }
@@ -240,7 +240,7 @@ module.exports.getCompany = async function(options={}){
 
 module.exports.ownHoldings = async function(options={}){
     let bnc = new BusinessNetworkConnection();
-    let cardName = options.user.substr(options.user.indexOf('@')+1)+'@local';
+    let cardName = options.user.substr(options.user.indexOf('@')+1)+'@hlfv1';
     if (!cardName) {
         cardName = companyCardName;
     }

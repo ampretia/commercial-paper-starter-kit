@@ -86,9 +86,9 @@ $(document).on('ready', function () {
                 ws.send(JSON.stringify(obj));
                 $('.panel').hide();
                 setTimeout(function () {
-    			$("#tradePanel").fadeIn(300);
+    			$('#tradePanel').fadeIn(300);
     		}, 600);
-                window.history.pushState({},'', "trade");
+                window.history.pushState({},'', 'trade');
                 refreshPage();
             }
         }
@@ -121,19 +121,19 @@ $(document).on('ready', function () {
 
     // Filter the trades whenever the filter modal changes
     $('.trade-filter').keyup(function () {
-        'use strict';
+
         console.log('Change in trade filter detected.');
         processFilterForm(panels[0]);
     });
     $('.audit-filter').keyup(function () {
-        'use strict';
+
         console.log('Change in audit filter detected.');
         processFilterForm(panels[1]);
     });
 
     // Click events for the columns of the table
     $('.sort-selector').click(function () {
-        'use strict';
+
         let sort = $(this).attr('sort');
 
         // Clear any sort direction arrows
@@ -173,12 +173,11 @@ $(document).on('ready', function () {
             let cusip = $(this).attr('data_cusip');
             let issuer = $(this).attr('data_issuer');
 
-            // TODO Map the trade_pos to the correct button
+
             let msg = {
                 type: 'transfer_paper',
                 transfer: {
-                    //CUSIP: bag.papers[i].cusip,
-                    //fromCompany: bag.papers[i].issuer,
+
                     CUSIP: cusip,
                     fromCompany: issuer,
                     toCompany: user.name,
@@ -188,6 +187,7 @@ $(document).on('ready', function () {
             };
             console.log('sending', msg);
             ws.send(JSON.stringify(msg));
+            // $('.loadingdiv').show();
             $('#notificationPanel').animate({width: 'toggle'});
         }
     });
@@ -292,6 +292,7 @@ function connect_to_server() {
     /** */
     function onMessage(msg) {
         try {
+            $('#loading').hide();
             console.log(msg);
             let data = JSON.parse(msg.data);
             console.log('Client Rec', data);
@@ -342,7 +343,7 @@ function connect_to_server() {
                 }
             }
             else if (data.msg === 'refresh') {
-              refreshPage();
+                refreshPage();
             }
             else if (data.type === 'error') {
                 console.log('Error:', data.error);
@@ -377,20 +378,21 @@ function connect_to_server() {
 // =================================================================================
 
 function refreshPage() {
+    $('#loading').show();
     // refresh the page depending on what the url contains
-    var currentPage = window.location.pathname;
-    if (currentPage == "/trade") {
-      console.log("trade refresh");
-      ws.send(JSON.stringify({type: 'get_open_trades', v: 2, user: user.username}));
+    let currentPage = window.location.pathname;
+    if (currentPage == '/trade') {
+        console.log('trade refresh');
+        ws.send(JSON.stringify({type: 'get_open_trades', v: 2, user: user.username}));
     }
-    else if (currentPage == "/holding") {
-      console.log("holding refresh");
-      ws.send(JSON.stringify({type: 'get_own_papers', v: 2, user: user.username}));
+    else if (currentPage == '/holding') {
+        console.log('holding refresh');
+        ws.send(JSON.stringify({type: 'get_own_papers', v: 2, user: user.username}));
     }
     else {
-      console.log('default refresh');
-      ws.send(JSON.stringify({type: 'get_open_trades', v: 2, user: user.username}));
-      ws.send(JSON.stringify({type: 'get_own_papers', v: 2, user: user.username}));
+        console.log('default refresh');
+        ws.send(JSON.stringify({type: 'get_open_trades', v: 2, user: user.username}));
+        ws.send(JSON.stringify({type: 'get_own_papers', v: 2, user: user.username}));
     }
     if (user.name && user.role !== 'auditor') {
         ws.send(JSON.stringify({type: 'get_company', company: user.name, user: user.username}));
@@ -437,7 +439,7 @@ function build_trades(papers, panelDesc) {
                     let style=null;
                     // console.log("USERNAME IS:" + JSON.stringify() );
                     if ($('#companyName').html().toLowerCase() === escapeHtml(entries[i].owner.toLowerCase()) && entries[i].owner.toLowerCase() === entries[i].issuer.toLowerCase()) {
-                      style = 'invalid';
+                        style = 'invalid';
                     }
                     // if (entries[i].owner.toLowerCase() == entries[i].owner.toLowerCase()) {
                     //     //cannot buy my own stuff

@@ -18,8 +18,8 @@
 .loadingdiv span{
 	display: inline-block;
 	vertical-align: middle;
-	width: 4px;
-	background: $main_bg;
+	width: 3px;
+	background: $main_color;
 	border-radius: 3px;
 	-webkit-animation: loading 0.8s infinite alternate;
 	-moz-animation: loading 0.8s infinite alternate;
