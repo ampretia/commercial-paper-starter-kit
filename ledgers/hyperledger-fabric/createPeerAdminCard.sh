@@ -117,18 +117,18 @@ cat << EOF > /tmp/DevServer_connection.json
     },
     "orderers": {
         "orderer.example.com": {
-            "url": "grpc://172.25.0.2:7050"
+            "url": "grpc://localhost:7050"
         }
     },
     "peers": {
         "peer0.org1.example.com": {
-            "url": "grpc://172.25.0.5:7051",
-            "eventUrl": "grpc://172.25.0.5:7053"
+            "url": "grpc://localhost:7051",
+            "eventUrl": "grpc://localhost:7053"
         }
     },
     "certificateAuthorities": {
         "ca.org1.example.com": {
-            "url": "http://172.25.0.4:7054",
+            "url": "http://localhost:7054",
             "caName": "ca.org1.example.com"
         }
     }

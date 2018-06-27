@@ -59,7 +59,6 @@ async function showCompany(userCardName){
 
         let companiesRegistry = await businessNetworkConnection.getRegistry(`${ns}.Company`);
         let accountRegistry = await businessNetworkConnection.getRegistry(`${ns}.Account`);
-        let paperOwnershipRegistry = await businessNetworkConnection.getRegistry(`${ns}.PaperOwnership`);
         let paperRegistry = await businessNetworkConnection.getRegistry(`${ns}.CommercialPaper`);
 
         let company = await companiesRegistry.get(participantId);
@@ -73,8 +72,7 @@ async function showCompany(userCardName){
 
         let issuedPaperAccount = await accountRegistry.get(company.issuedPaperAccount.getIdentifier());
         for (const paperref of issuedPaperAccount.assets){
-            let paperOwnership = await paperOwnershipRegistry.get(paperref.getIdentifier());
-            let paper = await paperRegistry.get(paperOwnership.paper.getIdentifier());
+            let paper = await paperRegistry.get(paperref.getIdentifier());
             let data = [paper.CUSIP,paper.ticker,paper.currency,paper.par,paper.maturity,paper.issueData];
             table.push(data);
         }
@@ -90,8 +88,7 @@ async function showCompany(userCardName){
 
             let listingsTable = new Table({head:['ID','Ticker','Currency','Par','Maturity','Issue Date']});
             for (const paperRef of account.assets){
-                let ownership = await paperOwnershipRegistry.get(paperRef.getIdentifier());
-                let paper = await paperRegistry.get(ownership.paper.getIdentifier());
+                let paper = await paperRegistry.get(paperRef.getIdentifier());
                 let data = [paper.CUSIP,paper.ticker,paper.currency,paper.par,paper.maturity,paper.issueDate];
 
                 listingsTable.push(data);

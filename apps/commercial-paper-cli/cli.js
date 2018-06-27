@@ -55,7 +55,7 @@ async function askQuestions(questions) {
 }
 
 const welcomeMsg=chalk`Use the {bold card <cardname>} command to pick a Composer Network Card to use. There is one card per ogranization.
-Use the commands {bold 'issue' 'company' 'market' 'trace' 'redeem'} to interact with the commerical paper markets.
+Use the commands {bold 'issue' 'company' 'market' 'trade' 'redeem'} to interact with the commerical paper markets.
 Each command asks questions to guide you. 
 
 To finish 'quit' 'exit' or ctrl-d
@@ -137,7 +137,7 @@ async function main() {
                 console.log('Please use the card command to set the network card to use');
             } else {
                 let data = await askQuestions(redeem.questions);
-                await issue.submit(redeem, data);
+                await redeem.submit(cardName, data);
             }
 
             break;

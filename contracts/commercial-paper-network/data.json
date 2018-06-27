@@ -47,7 +47,6 @@
             {
                 "$class": "org.example.commercialpaper.Account",
                 "ID": "AAI-USD-001",
-                "name": "USD-001",
                 "summary": "US Trading account 1",
                 "cashBalance": "1000000",
                 "assets":[]
@@ -56,7 +55,6 @@
             {
                 "$class": "org.example.commercialpaper.Account",
                 "ID": "AAI-ISSUED-USD",
-                "name": "USD-001",
                 "summary": "US Issuing Account",
                 "cashBalance": "0",
                 "assets":[]
@@ -65,7 +63,6 @@
             {
                 "$class": "org.example.commercialpaper.Account",
                 "ID": "BAH-USD-001",
-                "name": "USD-001",
                 "summary": "US Trading account 1",
                 "cashBalance": "1000000",
                 "assets":[]
@@ -73,7 +70,6 @@
             {
                 "$class": "org.example.commercialpaper.Account",
                 "ID": "AAI-GBP-001",
-                "name": "GBP-001",
                 "summary": "UK Trading account 1",
                 "workingCurrency" :"STERLING",
                 "cashBalance": "1000000",
@@ -82,7 +78,6 @@
             {
                 "$class": "org.example.commercialpaper.Account",
                 "ID": "BAH-GBP-001",
-                "name": "GBP-001",
                 "summary": "UK Trading account 1",
                 "workingCurrency" :"STERLING",
                 "cashBalance": "1000000",
@@ -91,7 +86,6 @@
             {
                 "$class": "org.example.commercialpaper.Account",
                 "ID": "BAH-ISSUED-USD",
-                "name": "USD-001",
                 "summary": "US Trading account 1",
                 "cashBalance": "0",
                 "assets":[]
@@ -99,7 +93,6 @@
             {
                 "$class": "org.example.commercialpaper.Account",
                 "ID": "AMI-ISSUED-USD",
-                "name": "USD-001-ISSUED",
                 "summary": "US Trading account 1",
                 "cashBalance": "0",
                 "assets":[]

@@ -65,38 +65,17 @@ participant Company identified by symbol {
 }
 
 /**
- * An asset that permits a company to manage a number of accounts; each of which may be in a
- * different currency, market, or be approved for certain traders only
-   */
-asset Account identified by ID {
-  o String	ID            
-  o String  summary   
-  o String name       
-  o Currency workingCurrency default="USD"
-  o Double	cashBalance  
-  --> PaperOwnership[]  assets
-}
-
-/**
- * @param {String} ID Concatenation: company-identifier,paper-cusip (e.g. 'fabric.hyperledger.cp.Company#ACME,ABCDEF012')
- * @param {CommericalPaper} paper  Paper owned
- * @param {Company} owner Company which owns this quantity of this paper
- * @param {Integer} quantity of paper owned
+ * Represents a trader working at a specific company, who has permission to trader
+ * This trader doesn't have a block chain identity so really shouldn't be a participant even though in this 
+ * case this is refering to an actual person
  */
-asset PaperOwnership identified by ID {
-  o String ID					 
-  --> CommercialPaper paper		
-  --> Company owner	
-  --> Account owningAccount		
-}
-
-/**
- * Listing of a Commerical Paper within a given market
- */
-asset PaperListing identified by ID {
-  o String ID
-  --> PaperOwnership   paperOwnership
-  o Double             discount   range=[0.0,]
+participant Trader identified by participantId {
+  o String participantId
+  o String firstName
+  o String lastName
+  --> Company worksFor
+  --> Account[] manages
+  o DID    traderdid optional
 }
 
 /**
@@ -114,22 +93,39 @@ asset CommercialPaper identified by CUSIP {
   o Currency    currency   default="USD"
 	o Double      par        range=[0.0,]         
 	o Integer     maturity   range=[1,]  
-	--> Company   issuer     
-	o DateTime    issueDate  
+	--> Company   issuer
+  --> Company   owner
+  --> Account   owningAccount
+	o DateTime    issueDate
 }
 
 /**
- * Represents a trader working at a specific company, who has permission to trader
- * This trader doesn't have a block chain identity so really shouldn't be a participant even though in this 
- * case this is refering to an actual person
+ * An asset that permits a company to manage a number of accounts; each of which may be in a
+ * different currency, market, or be approved for certain traders only
+   */
+asset Account identified by ID {
+  o String	ID            
+  o String  summary          
+  o Currency workingCurrency default="USD"
+  o Double	cashBalance  
+  --> CommercialPaper[]  assets
+}
+
+// concept PaperOwnership {
+//   o String ID
+//   --> CommercialPaper paper
+//   --> Company owner
+//   --> Account owningAccount
+// }
+
+/**
+ * Listing of a Commerical Paper within a given market
  */
-participant Trader identified by participantId {
-  o String participantId
-  o String firstName
-  o String lastName
-  --> Company worksFor
-  --> Account[] manages
-  o DID    traderdid
+concept PaperListing {
+  o String ID
+  --> CommercialPaper paper
+  --> Company         currentOwner
+  o Double            discount   range=[0.0,]
 }
 
 /**
@@ -139,25 +135,8 @@ asset Market identified by ID {
   o String ID
   o String name
   o Currency         currency   default="USD"
-  --> PaperListing[] papersForSale
+  o PaperListing[]   papersForSale
   o Integer          maxMaturityTime range=[1,]
-}
-
-
-/**
- * Redeems a paper when it matures
- */
-transaction RedeemPaper {
-  --> PaperOwnership maturedPaper
-}
-
-/**
- * Issue the trade of a paper from the existing owner to the new owner
- */
-transaction PurchasePaper {
-  --> Market market
-	--> PaperListing listing       
-  --> Account account
 }
 
 /**
@@ -175,12 +154,56 @@ transaction CreatePaper {
 }
 
 /**
+ * Event for the CreatePaper transaction
+ */
+event CreatePaperEvent {
+  --> CommercialPaper paper
+}
+
+/**
  * List on market
  */
 transaction ListOnMarket {
   --> Market market
   o Double  discount range=[0.0,]
-  --> PaperOwnership[] papersToList
+  --> CommercialPaper[] papersToList
+}
+
+/**
+ * Event for the ListOnMarket transaction
+ */
+event ListOnMarketEvent {
+  --> Market market
+}
+
+/**
+ * Issue the trade of a paper from the existing owner to the new owner
+ */
+transaction PurchasePaper {
+  --> Market market
+	o String listingID
+  --> Account account
+}
+
+/**
+ * Event for the PurchasePaper event
+ */
+event PurchasePaperEvent {
+  --> CommercialPaper paper
+}
+
+/**
+ * Redeems a paper when it matures
+ */
+transaction RedeemPaper {
+  --> CommercialPaper maturedPaper
+}
+
+/**
+ * Event for the RedeemPaper transaction
+ */
+event RedeemPaperEvent {
+  --> CommercialPaper maturedPaper
 }
 
 /**
@@ -189,5 +212,12 @@ transaction ListOnMarket {
 transaction AssignDid {
   --> Company  targetCompany
   o DID publicdid
+}
+
+/** 
+ * Event for the AssignDid transaction
+ */
+event AssignDidEvent {
+  --> Company targetCompany
 }
 
